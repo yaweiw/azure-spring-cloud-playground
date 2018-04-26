@@ -16,16 +16,6 @@
 
 package io.spring.initializr.generator;
 
-import java.beans.PropertyDescriptor;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.nio.charset.Charset;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.fasterxml.jackson.databind.util.Annotations;
 import io.spring.initializr.InitializrException;
 import io.spring.initializr.metadata.BillOfMaterials;
 import io.spring.initializr.metadata.Dependency;
@@ -37,7 +27,6 @@ import io.spring.initializr.util.Version;
 import io.spring.initializr.util.VersionProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,6 +34,15 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.util.Assert;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StreamUtils;
+
+import java.beans.PropertyDescriptor;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Generate a project based on the configured metadata.
@@ -186,6 +184,8 @@ public class ProjectGenerator {
 		final String baseDir = request.getBaseDir();
 		final String groupId = request.getGroupId();
 		final String name = request.getName();
+		final String artifactId = request.getArtifactId();
+		final String version = request.getVersion();
 
 		styles.forEach((s) -> {
 			request.setStyle(Collections.singletonList(s));
@@ -194,6 +194,11 @@ public class ProjectGenerator {
 			request.setGroupId(request.getGroupId() + "." + s);
 
 			final Map<String, Object> model = resolveModel(request);
+
+			model.put("mavenParentGroupId", groupId);
+			model.put("mavenParentArtifactId", artifactId);
+			model.put("mavenParentVersion", version);
+
 			final File dir = generateProjectStructure(request, model);
 			publishProjectGeneratedEvent(request);
 
@@ -208,7 +213,7 @@ public class ProjectGenerator {
 		return files;
 	}
 
-	private void writeProjectPom(List<File> files, File rootDir, Map<String, Object> rootModel) {
+	private void writeProject(List<File> files, File rootDir, Map<String, Object> rootModel, ProjectRequest request) {
 		final StringBuilder builder = new StringBuilder();
 		Assert.notEmpty(files.toArray(), "should not be empty");
 
@@ -225,18 +230,22 @@ public class ProjectGenerator {
 
 		final File pom = new File(rootDir.getPath() + "/" + "pom.xml");
 		String pomString = this.templateRenderer.process("parent-pom.xml", rootModel);
+		writeText(pom, pomString.replace("$$MODULES_PLACEHOLDER$$", builder.toString()));
 
-		pomString = pomString.replace("$$MODULES_PLACEHOLDER$$", builder.toString());
+		final File gitIgnore = new File(rootDir.getPath() + "/" + request.getBaseDir() + "/.gitignore");
+		gitIgnore.renameTo(new File(rootDir.getPath() + "/" + ".gitignore"));
 
-		writeText(pom, pomString);
+		final File mvnw = new File(rootDir.getPath() + "/" + request.getBaseDir() + "/mvnw");
+		mvnw.renameTo(new File(rootDir.getPath() + "/" + "mvnw"));
+
+		final File mvnwCmd = new File(rootDir.getPath() + "/" + request.getBaseDir() + "/mvnw.cmd");
+		mvnwCmd.renameTo(new File(rootDir.getPath() + "/" + "mvnw.cmd"));
 	}
 
 	private void deleteDirectory(File dir) {
 		if (dir != null) {
 			if (dir.isDirectory()) {
-				final List<File> children = Arrays.asList(dir.listFiles());
-
-				children.forEach(f -> deleteDirectory(f));
+				Arrays.asList(dir.listFiles()).forEach(f ->deleteDirectory(f));
 			}
 
 			dir.delete();
@@ -252,25 +261,18 @@ public class ProjectGenerator {
 	public File generateProjectStructure(ProjectRequest request) {
 
 		try {
-			final File rootDir;
+			final List<File> files = this.generateSubProjectStructure(request);
 
-			if (request.getStyle().size() > 0) {
+			request.setPackaging("pom");
 
-				final List<File> files = this.generateSubProjectStructure(request);
-				final Map<String, Object> model = resolveModel(request);
-				rootDir = generateProjectStructure(request, model);
-				final String originalDir = rootDir.getPath() + "/" + request.getBaseDir();
+			final Map<String, Object> model = resolveModel(request);
+			final File rootDir = generateProjectStructure(request, model);
+			final String originalDir = rootDir.getPath() + "/" + request.getBaseDir();
 
-				publishProjectGeneratedEvent(request);
-				writeProjectPom(files, rootDir, model);
-				deleteDirectory(new File(originalDir));
-			}
-			else {
-				final Map<String, Object> model = resolveModel(request);
-				rootDir = generateProjectStructure(request, model);
-
-				publishProjectGeneratedEvent(request);
-			}
+			publishProjectGeneratedEvent(request);
+			writeProject(files, rootDir, model, request);
+			deleteDirectory(new File(originalDir));
+			publishProjectGeneratedEvent(request);
 
 			return rootDir;
 		}
