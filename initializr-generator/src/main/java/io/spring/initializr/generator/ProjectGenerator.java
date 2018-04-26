@@ -200,6 +200,10 @@ public class ProjectGenerator {
 			model.put("mavenParentVersion", version);
 
 			final File dir = generateProjectStructure(request, model);
+			new File(dir.getPath() + "/" + request.getBaseDir() + "/.gitignore").delete();
+			new File(dir.getPath() + "/" + request.getBaseDir() + "/mvnw").delete();
+			new File(dir.getPath() + "/" + request.getBaseDir() + "/mvnw.cmd").delete();
+			deleteDirectory(new File(dir.getPath() + "/" + request.getBaseDir() + "/.mvn"));
 			publishProjectGeneratedEvent(request);
 
 			files.add(dir);
@@ -240,6 +244,8 @@ public class ProjectGenerator {
 
 		final File mvnwCmd = new File(rootDir.getPath() + "/" + request.getBaseDir() + "/mvnw.cmd");
 		mvnwCmd.renameTo(new File(rootDir.getPath() + "/" + "mvnw.cmd"));
+
+		deleteDirectory(new File(rootDir.getPath() + "/" + request.getBaseDir() + "/.mvn"));
 	}
 
 	private void deleteDirectory(File dir) {
