@@ -22,15 +22,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.util.Annotations;
 import io.spring.initializr.InitializrException;
 import io.spring.initializr.metadata.BillOfMaterials;
 import io.spring.initializr.metadata.Dependency;
@@ -185,6 +180,69 @@ public class ProjectGenerator {
 		}
 	}
 
+	private List<File> generateSubProjectStructure(ProjectRequest request) {
+		final List<String> styles = request.getStyle();
+		final List<File> files = new ArrayList<>();
+		final String baseDir = request.getBaseDir();
+		final String groupId = request.getGroupId();
+		final String name = request.getName();
+
+		styles.forEach((s) -> {
+			request.setStyle(Collections.singletonList(s));
+			request.setBaseDir(s);
+			request.setName(s);
+			request.setGroupId(request.getGroupId() + "." + s);
+
+			final Map<String, Object> model = resolveModel(request);
+			final File dir = generateProjectStructure(request, model);
+			publishProjectGeneratedEvent(request);
+
+			files.add(dir);
+		});
+
+		request.setStyle(new ArrayList<>());
+		request.setBaseDir(baseDir);
+		request.setGroupId(groupId);
+		request.setName(name);
+
+		return files;
+	}
+
+	private void writeProjectPom(List<File> files, File rootDir, Map<String, Object> rootModel) {
+		final StringBuilder builder = new StringBuilder();
+		Assert.notEmpty(files.toArray(), "should not be empty");
+
+		builder.append("<modules>\n");
+
+		files.forEach(f -> {
+			final File module = f.listFiles()[0];
+			builder.append(String.format("        <module>%s</module>\n", module.getName()));
+			final File subModule = new File(rootDir.getPath() + "/" + module.getName());
+			module.renameTo(subModule);
+		});
+
+		builder.append("    </modules>\n");
+
+		final File pom = new File(rootDir.getPath() + "/" + "pom.xml");
+		String pomString = this.templateRenderer.process("parent-pom.xml", rootModel);
+
+		pomString = pomString.replace("$$MODULES_PLACEHOLDER$$", builder.toString());
+
+		writeText(pom, pomString);
+	}
+
+	private void deleteDirectory(File dir) {
+		if (dir != null) {
+			if (dir.isDirectory()) {
+				final List<File> children = Arrays.asList(dir.listFiles());
+
+				children.forEach(f -> deleteDirectory(f));
+			}
+
+			dir.delete();
+		}
+	}
+
 	/**
 	 * Generate a project structure for the specified {@link ProjectRequest}. Returns a
 	 * directory containing the project.
@@ -192,10 +250,28 @@ public class ProjectGenerator {
 	 * @return the generated project structure
 	 */
 	public File generateProjectStructure(ProjectRequest request) {
+
 		try {
-			Map<String, Object> model = resolveModel(request);
-			File rootDir = generateProjectStructure(request, model);
-			publishProjectGeneratedEvent(request);
+			final File rootDir;
+
+			if (request.getStyle().size() > 0) {
+
+				final List<File> files = this.generateSubProjectStructure(request);
+				final Map<String, Object> model = resolveModel(request);
+				rootDir = generateProjectStructure(request, model);
+				final String originalDir = rootDir.getPath() + "/" + request.getBaseDir();
+
+				publishProjectGeneratedEvent(request);
+				writeProjectPom(files, rootDir, model);
+				deleteDirectory(new File(originalDir));
+			}
+			else {
+				final Map<String, Object> model = resolveModel(request);
+				rootDir = generateProjectStructure(request, model);
+
+				publishProjectGeneratedEvent(request);
+			}
+
 			return rootDir;
 		}
 		catch (InitializrException ex) {
