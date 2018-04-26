@@ -16,6 +16,7 @@
 
 package io.spring.initializr.generator;
 
+import com.fasterxml.jackson.databind.util.Annotations;
 import io.spring.initializr.InitializrException;
 import io.spring.initializr.metadata.BillOfMaterials;
 import io.spring.initializr.metadata.Dependency;
@@ -96,6 +97,47 @@ public class ProjectGenerator {
 	private File temporaryDirectory;
 
 	private transient Map<String, List<File>> temporaryFiles = new LinkedHashMap<>();
+
+	private final static Map<String, String> annotationMap = new HashMap<>();
+	private final static Map<String, List<String>> importMap = new HashMap<>();
+	private final static Map<String, String> applicationYamlMap = new HashMap<>();
+
+	static {
+	    final String cloudEurekaServerYaml = "server:\n" +
+				"  port: 9999\n" +
+				"eureka:\n" +
+				"  instance:\n" +
+				"    hostname: localhost\n" +
+				"  client:\n" +
+				"    register-with-eureka: false\n" +
+				"    fetch-registry: false\n" +
+				"  serviceUrl:\n" +
+				"    defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/\n";
+
+		annotationMap.put("azureservicebus", "@SpringBootApplication");
+		importMap.put("azureservicebus", Arrays.asList("org.springframework.boot.autoconfigure.SpringBootApplication"));
+		applicationYamlMap.put("azureservicebus", "");
+
+		annotationMap.put("cloud-config-server", "@SpringBootApplication");
+		importMap.put("cloud-config-server", Arrays.asList("org.springframework.boot.autoconfigure.SpringBootApplication"));
+		applicationYamlMap.put("cloud-config-server", "");
+
+		annotationMap.put("cloud-eureka-server", "@SpringBootApplication\n@EnableEurekaServer");
+		importMap.put("cloud-eureka-server", Arrays.asList(
+				"org.springframework.boot.autoconfigure.SpringBootApplication",
+				"org.springframework.cloud.netflix.eureka.server.EnableEurekaServer"
+				)
+		);
+		applicationYamlMap.put("cloud-eureka-server", cloudEurekaServerYaml);
+
+		annotationMap.put("cloud-gateway", "@SpringBootApplication");
+		importMap.put("cloud-gateway", Arrays.asList("org.springframework.boot.autoconfigure.SpringBootApplication"));
+		applicationYamlMap.put("cloud-gateway", "");
+
+		annotationMap.put("cloud-hystrix-dashboard", "@SpringBootApplication");
+		importMap.put("cloud-hystrix-dashboard", Arrays.asList("org.springframework.boot.autoconfigure.SpringBootApplication"));
+		applicationYamlMap.put("cloud-hystrix-dashboard", "");
+	}
 
 	public InitializrMetadataProvider getMetadataProvider() {
 		return this.metadataProvider;
@@ -192,6 +234,7 @@ public class ProjectGenerator {
 			request.setBaseDir(s);
 			request.setName(s);
 			request.setGroupId(request.getGroupId() + "." + s);
+			request.setApplicationName(null);
 
 			final Map<String, Object> model = resolveModel(request);
 
@@ -350,7 +393,9 @@ public class ProjectGenerator {
 
 		File resources = new File(dir, "src/main/resources");
 		resources.mkdirs();
-		writeText(new File(resources, "application.properties"), "");
+		String applicationYaml = applicationYamlMap.get(request.getName());
+		applicationYaml = applicationYaml == null ? "" : applicationYaml;
+		writeText(new File(resources, "application.yml"), applicationYaml);
 
 		if (request.hasWebFacet()) {
 			new File(dir, "src/main/resources/templates").mkdirs();
@@ -596,8 +641,10 @@ public class ProjectGenerator {
 		boolean useSpringBootApplication = VERSION_1_2_0_RC1
 				.compareTo(Version.safeParse(request.getBootVersion())) <= 0;
 		if (useSpringBootApplication) {
-			imports.add("org.springframework.boot.autoconfigure.SpringBootApplication");
-			annotations.add("@SpringBootApplication");
+			if (importMap.containsKey(request.getName())) {
+				importMap.get(request.getName()).forEach(imports::add);
+			}
+			annotations.add(annotationMap.get(request.getName()));
 		}
 		else {
 			imports.add("org.springframework.boot.autoconfigure.EnableAutoConfiguration")
