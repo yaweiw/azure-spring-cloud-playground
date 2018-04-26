@@ -236,37 +236,6 @@ public class ProjectGenerator {
 
 		generateGitIgnore(dir, request);
 
-		String applicationName = request.getApplicationName();
-		String language = request.getLanguage();
-
-		String codeLocation = language;
-		File src = new File(new File(dir, "src/main/" + codeLocation),
-				request.getPackageName().replace(".", "/"));
-		src.mkdirs();
-		String extension = ("kotlin".equals(language) ? "kt" : language);
-		write(new File(src, applicationName + "." + extension),
-				"Application." + extension, model);
-
-		if ("war".equals(request.getPackaging())) {
-			String fileName = "ServletInitializer." + extension;
-			write(new File(src, fileName), fileName, model);
-		}
-
-		File test = new File(new File(dir, "src/test/" + codeLocation),
-				request.getPackageName().replace(".", "/"));
-		test.mkdirs();
-		setupTestModel(request, model);
-		write(new File(test, applicationName + "Tests." + extension),
-				"ApplicationTests." + extension, model);
-
-		File resources = new File(dir, "src/main/resources");
-		resources.mkdirs();
-		writeText(new File(resources, "application.properties"), "");
-
-		if (request.hasWebFacet()) {
-			new File(dir, "src/main/resources/templates").mkdirs();
-			new File(dir, "src/main/resources/static").mkdirs();
-		}
 		return rootDir;
 	}
 
