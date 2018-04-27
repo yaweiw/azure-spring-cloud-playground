@@ -290,8 +290,6 @@ public class ProjectGenerator {
 	 */
 	protected File generateProjectModuleStructure(ProjectRequest request,
 											Map<String, Object> model, File rootDir, ProjectRequest parentModule) {
-
-
 		File dir = initializerProjectDir(rootDir, request);
 
 		if (isGradleBuild(request)) {
