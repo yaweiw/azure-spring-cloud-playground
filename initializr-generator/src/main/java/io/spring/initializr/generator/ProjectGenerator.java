@@ -131,10 +131,11 @@ public class ProjectGenerator {
 				"org.springframework.cloud.client.discovery.EnableDiscoveryClient"));
 
 		// Cloud Hystrix Dashboard
-		annotationMap.put(cloudHystrixDashboard, Arrays.asList("@SpringBootApplication", "@EnableDiscoveryClient"));
+		annotationMap.put(cloudHystrixDashboard, Arrays.asList("@SpringBootApplication", "@EnableDiscoveryClient", "@EnableHystrixDashboard"));
 		importMap.put(cloudHystrixDashboard, Arrays.asList(
 				"org.springframework.boot.autoconfigure.SpringBootApplication",
-				"org.springframework.cloud.client.discovery.EnableDiscoveryClient"));
+				"org.springframework.cloud.client.discovery.EnableDiscoveryClient",
+				"org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard"));
 	}
 
 	public InitializrMetadataProvider getMetadataProvider() {
