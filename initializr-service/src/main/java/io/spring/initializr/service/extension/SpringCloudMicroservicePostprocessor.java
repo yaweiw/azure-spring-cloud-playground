@@ -32,7 +32,6 @@ public class SpringCloudMicroservicePostprocessor extends AbstractProjectRequest
 
             ProjectRequest subModule = new ProjectRequest(request);
             subModule.setName(service);
-            subModule.setApplicationName(service);
             subModule.setArtifactId(request.getArtifactId() + "." + service);
             subModule.setDependencies(serviceToDependencies.get(service));
             subModule.setBaseDir(service);
