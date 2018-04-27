@@ -872,7 +872,7 @@ initializr:
       versionRange: 1.2.3.RELEASE
       content:
         - name: Eureka Discovery
-          id: cloud-eureka
+          id: cloud-eureka-client
           description: Service discovery using spring-cloud-netflix and Eureka
           groupId: org.springframework.cloud
           artifactId: spring-cloud-starter-netflix-eureka-client
