@@ -23,9 +23,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.spring.initializr.metadata.Dependency;
-import io.spring.initializr.metadata.DependencyGroup;
-import io.spring.initializr.metadata.InitializrMetadataProvider;
+import io.spring.initializr.metadata.*;
 import io.spring.initializr.util.Version;
 
 import org.springframework.http.MediaType;
@@ -81,6 +79,40 @@ public class UiController {
 		return json.toString();
 	}
 
+	@GetMapping(path = "/ui/services", produces = "application/json")
+	public ResponseEntity<String> services() {
+		List<ServiceModuleGroup> moduleGroups = this.metadataProvider.get()
+				.getServices().getContent();
+		List<ServiceItem> content = new ArrayList<>();
+		moduleGroups.forEach((g) -> g.getContent().forEach((d) -> {
+			content.add(new ServiceItem(g.getName(), d));
+		}));
+		String json = writeServices(content);
+		return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+				.eTag(createUniqueId(json)).body(json);
+	}
+
+
+	private static String writeServices(List<ServiceItem> items) {
+		ObjectNode json = JsonNodeFactory.instance.objectNode();
+		ArrayNode maps = JsonNodeFactory.instance.arrayNode();
+		items.forEach((d) -> maps.add(mapService(d)));
+		json.set("services", maps);
+		return json.toString();
+	}
+
+	private static ObjectNode mapService(ServiceItem item) {
+		ObjectNode node = JsonNodeFactory.instance.objectNode();
+		ServiceModule module = item.module;
+		node.put("id", module.getId());
+		node.put("name", module.getName());
+		node.put("group", item.group);
+		if (module.getDescription() != null) {
+			node.put("description", module.getDescription());
+		}
+		return node;
+	}
+
 	private static ObjectNode mapDependency(DependencyItem item) {
 		ObjectNode node = JsonNodeFactory.instance.objectNode();
 		Dependency d = item.dependency;
@@ -118,6 +150,19 @@ public class UiController {
 		DependencyItem(String group, Dependency dependency) {
 			this.group = group;
 			this.dependency = dependency;
+		}
+
+	}
+
+	private static class ServiceItem {
+
+		private final String group;
+
+		private final ServiceModule module;
+
+		ServiceItem(String group, ServiceModule module) {
+			this.group = group;
+			this.module = module;
 		}
 
 	}

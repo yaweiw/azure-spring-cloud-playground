@@ -39,6 +39,12 @@ public class InitializrProperties extends InitializrConfiguration {
 	private final List<DependencyGroup> dependencies = new ArrayList<>();
 
 	/**
+	 * ServiceModules, organized in groups (i.e. themes).
+	 */
+	@JsonIgnore
+	private final List<ServiceModuleGroup> services = new ArrayList<>();
+
+	/**
 	 * Available project types.
 	 */
 	@JsonIgnore
@@ -107,6 +113,10 @@ public class InitializrProperties extends InitializrConfiguration {
 
 	public List<DependencyGroup> getDependencies() {
 		return this.dependencies;
+	}
+
+	public List<ServiceModuleGroup> getServices() {
+		return this.services;
 	}
 
 	public List<Type> getTypes() {
