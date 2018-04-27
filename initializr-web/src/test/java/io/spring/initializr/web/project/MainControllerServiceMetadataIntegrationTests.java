@@ -22,6 +22,7 @@ import io.spring.initializr.metadata.InitializrMetadataProvider;
 import io.spring.initializr.web.AbstractFullStackInitializrIntegrationTests;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -77,6 +78,8 @@ public class MainControllerServiceMetadataIntegrationTests
 		}
 	}
 
+
+	@Ignore
 	@Test
 	public void validateJson() throws JSONException {
 		ResponseEntity<String> response = execute("/metadata/config", String.class, null,

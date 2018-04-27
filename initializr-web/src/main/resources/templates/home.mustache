@@ -61,23 +61,20 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
                 </div>
             </div>
             <div class="row">
-                <div id="dependencies" class="full">
-                    {{#dependencies.content}}
+                <div id="services" class="full">
+                    {{#services.content}}
                     <div class="form-group col-sm-6">
                         <h3>{{name}}</h3>
                         {{#content}}
-                        <div class="checkbox" data-range="{{#versionRange}}{{versionRange}}{{/versionRange}}">
+                        <div class="checkbox">
                             <label>
                                 <input tabindex="13" type="checkbox" name="style" value="{{id}}">{{name}}
                                 <p class="help-block">{{#description}}{{.}}{{/description}}</p>
-                                {{#versionRequirement}}
-                                <p class="help-block version-requirement">requires Spring Boot {{.}}</p>
-                                {{/versionRequirement}}
                             </label>
                         </div>
                         {{/content}}
                     </div>
-                   {{/dependencies.content}}
+                   {{/services.content}}
                 </div>
             </div>
             <div class="row">

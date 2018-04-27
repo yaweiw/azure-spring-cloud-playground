@@ -170,6 +170,7 @@ public final class InitializrMetadataBuilder {
 		@Override
 		public void customize(InitializrMetadata metadata) {
 			metadata.getDependencies().merge(this.properties.getDependencies());
+			metadata.getServices().merge(this.properties.getServices());
 			metadata.getTypes().merge(this.properties.getTypes());
 			metadata.getBootVersions().merge(this.properties.getBootVersions());
 			metadata.getPackagings().merge(this.properties.getPackagings());

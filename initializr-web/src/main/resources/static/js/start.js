@@ -146,14 +146,14 @@ $(function () {
         $("#starters div[data-id='" + id + "']").remove();
     };
     var initializeSearchEngine = function (engine) {
-        $.getJSON("/ui/dependencies", function (data) {
+        $.getJSON("/ui/services", function (data) {
             engine.clear();
-            $.each(data.dependencies, function(idx, item) {
+            $.each(data.services, function(idx, item) {
                 if(item.weight === undefined) {
                     item.weight = 0;
                 }
             });
-            engine.add(data.dependencies);
+            engine.add(data.services);
         });
     };
     var generatePackageName = function() {
@@ -227,23 +227,23 @@ $(function () {
             }
         });
     $('#autocomplete').bind('typeahead:select', function (ev, suggestion) {
-        var alreadySelected = $("#dependencies input[value='" + suggestion.id + "']").prop('checked');
+        var alreadySelected = $("#services input[value='" + suggestion.id + "']").prop('checked');
         if(alreadySelected) {
             removeTag(suggestion.id);
-            $("#dependencies input[value='" + suggestion.id + "']").prop('checked', false);
+            $("#services input[value='" + suggestion.id + "']").prop('checked', false);
         }
         else {
             addTag(suggestion.id, suggestion.name);
-            $("#dependencies input[value='" + suggestion.id + "']").prop('checked', true);
+            $("#services input[value='" + suggestion.id + "']").prop('checked', true);
         }
         $('#autocomplete').typeahead('val', '');
     });
     $("#starters").on("click", "button", function () {
         var id = $(this).parent().attr("data-id");
-        $("#dependencies input[value='" + id + "']").prop('checked', false);
+        $("#services input[value='" + id + "']").prop('checked', false);
         removeTag(id);
     });
-    $("#dependencies input").bind("change", function () {
+    $("#services input").bind("change", function () {
         var value = $(this).val()
         if ($(this).prop('checked')) {
             var results = starters.get(value);

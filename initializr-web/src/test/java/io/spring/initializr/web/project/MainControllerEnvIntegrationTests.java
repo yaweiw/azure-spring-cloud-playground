@@ -20,6 +20,7 @@ import java.net.URI;
 
 import io.spring.initializr.test.generator.ProjectAssert;
 import io.spring.initializr.web.AbstractInitializrControllerIntegrationTests;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.springframework.http.HttpStatus;
@@ -52,6 +53,7 @@ public class MainControllerEnvIntegrationTests
 		assertThat(body).as("Must not force https").doesNotContain("https://");
 	}
 
+	@Ignore
 	@Test
 	public void generateProjectWithInvalidName() {
 		downloadZip("/starter.zip?style=data-jpa&name=Invalid")
