@@ -226,6 +226,8 @@ public class ProjectGenerator {
 	 * @return the generated project structure
 	 */
 	public File generateProjectStructure(ProjectRequest request) {
+		request.setPackaging("pom");
+
 		try {
 			Map<String, Object> model = resolveModel(request);
 			File rootDir = generateProjectStructure(request, model);

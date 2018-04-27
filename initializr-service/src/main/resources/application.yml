@@ -1371,6 +1371,9 @@ initializr:
     - name: Jar
       id: jar
       default: true
+    - name: Pom
+      id: pom
+      default: false
     - name: War
       id: war
       default: false
