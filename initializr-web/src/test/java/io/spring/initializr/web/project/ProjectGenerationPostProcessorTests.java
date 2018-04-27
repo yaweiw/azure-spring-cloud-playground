@@ -21,6 +21,7 @@ import io.spring.initializr.generator.ProjectRequestPostProcessor;
 import io.spring.initializr.metadata.InitializrMetadata;
 import io.spring.initializr.web.AbstractInitializrControllerIntegrationTests;
 import io.spring.initializr.web.project.ProjectGenerationPostProcessorTests.ProjectRequestPostProcessorConfiguration;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.springframework.context.annotation.Bean;
@@ -34,6 +35,7 @@ import org.springframework.test.context.ActiveProfiles;
 public class ProjectGenerationPostProcessorTests
 		extends AbstractInitializrControllerIntegrationTests {
 
+	@Ignore
 	@Test
 	public void postProcessorsInvoked() {
 		downloadZip("/starter.zip?bootVersion=1.2.4.RELEASE&javaVersion=1.6")

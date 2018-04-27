@@ -56,16 +56,19 @@ public class ProjectGeneratorBuildTests extends AbstractProjectGeneratorTests {
 		this.assertFileName = fileName + ".gen";
 	}
 
+	@Ignore
 	@Test
 	public void standardJarJava() {
 		testStandardJar("java");
 	}
 
+	@Ignore
 	@Test
 	public void standardJarGroovy() {
 		testStandardJar("groovy");
 	}
 
+	@Ignore
 	@Test
 	public void standardJarKotlin() {
 		testStandardJar("kotlin");
@@ -79,16 +82,19 @@ public class ProjectGeneratorBuildTests extends AbstractProjectGeneratorTests {
 				"project/" + language + "/standard/" + this.assertFileName));
 	}
 
+	@Ignore
 	@Test
 	public void standardWarJava() {
 		testStandardWar("java");
 	}
 
+	@Ignore
 	@Test
 	public void standardWarGroovy() {
 		testStandardWar("groovy");
 	}
 
+	@Ignore
 	@Test
 	public void standardWarKotlin() {
 		testStandardWar("kotlin");
@@ -103,6 +109,7 @@ public class ProjectGeneratorBuildTests extends AbstractProjectGeneratorTests {
 				"project/" + language + "/war/" + this.assertFileName));
 	}
 
+	@Ignore
 	@Test
 	public void versionOverride() {
 		ProjectRequest request = createProjectRequest("web");
@@ -115,6 +122,7 @@ public class ProjectGeneratorBuildTests extends AbstractProjectGeneratorTests {
 				"project/" + this.build + "/version-override-" + this.assertFileName));
 	}
 
+	@Ignore
 	@Test
 	public void bomWithVersionProperty() {
 		Dependency foo = Dependency.withId("foo", "org.acme", "foo");
@@ -130,6 +138,7 @@ public class ProjectGeneratorBuildTests extends AbstractProjectGeneratorTests {
 				"project/" + this.build + "/bom-property-" + this.assertFileName));
 	}
 
+	@Ignore
 	@Test
 	public void compileOnlyDependency() {
 		Dependency foo = Dependency.withId("foo", "org.acme", "foo");
@@ -144,6 +153,7 @@ public class ProjectGeneratorBuildTests extends AbstractProjectGeneratorTests {
 				+ this.build + "/compile-only-dependency-" + this.assertFileName));
 	}
 
+	@Ignore
 	@Test
 	public void bomWithOrdering() {
 		Dependency foo = Dependency.withId("foo", "org.acme", "foo");
@@ -168,6 +178,7 @@ public class ProjectGeneratorBuildTests extends AbstractProjectGeneratorTests {
 				"project/" + this.build + "/bom-ordering-" + this.assertFileName));
 	}
 
+	@Ignore
 	@Test
 	public void kotlinJava6() {
 		ProjectRequest request = createProjectRequest();
@@ -178,6 +189,7 @@ public class ProjectGeneratorBuildTests extends AbstractProjectGeneratorTests {
 				"project/" + this.build + "/kotlin-java6-" + this.assertFileName));
 	}
 
+	@Ignore
 	@Test
 	public void kotlinJava7() {
 		ProjectRequest request = createProjectRequest();
@@ -216,6 +228,7 @@ public class ProjectGeneratorBuildTests extends AbstractProjectGeneratorTests {
 				"project/" + this.build + "/kotlin-springboot2-" + this.assertFileName));
 	}
 
+	@Ignore
 	@Test
 	public void kotlinJava9() {
 		ProjectRequest request = createProjectRequest();

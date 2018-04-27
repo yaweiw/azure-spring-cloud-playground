@@ -18,6 +18,7 @@ package io.spring.initializr.web.project;
 
 import io.spring.initializr.test.generator.PomAssert;
 import io.spring.initializr.web.AbstractInitializrControllerIntegrationTests;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,7 @@ import org.springframework.test.context.ActiveProfiles;
 public class CommandLineExampleIntegrationTests
 		extends AbstractInitializrControllerIntegrationTests {
 
+	@Ignore
 	@Test
 	public void generateDefaultProject() {
 		downloadZip("/starter.zip").isJavaProject().isMavenProject()
@@ -43,6 +45,7 @@ public class CommandLineExampleIntegrationTests
 				.hasDependenciesCount(2);
 	}
 
+	@Ignore
 	@Test
 	public void generateWebProjectWithJava8() {
 		downloadZip("/starter.zip?dependencies=web&javaVersion=1.8").isJavaProject()
@@ -51,6 +54,7 @@ public class CommandLineExampleIntegrationTests
 				.hasSpringBootStarterTest().hasDependenciesCount(2);
 	}
 
+	@Ignore
 	@Test
 	public void generateWebDataJpaGradleProject() {
 		downloadTgz(
