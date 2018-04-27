@@ -22,6 +22,7 @@ public class ModulePropertiesResolver {
 
         sharedPropTemplateMap.put("cloud-eureka-server", "discovery.yml");
         sharedPropTemplateMap.put("cloud-gateway", "gateway.yml");
+        sharedPropTemplateMap.put("cloud-hystrix-dashboard", "hystrix-dashboard.yml");
     }
 
     public static String getBootstrapTemplate(String module) {
