@@ -113,10 +113,10 @@ public class ProjectGenerator {
 				"org.springframework.cloud.client.discovery.EnableDiscoveryClient"));
 
 		// Cloud Config Server
-		annotationMap.put(cloudConfigServer, Arrays.asList("@SpringBootApplication", "@EnableDiscoveryClient"));
+		annotationMap.put(cloudConfigServer, Arrays.asList("@SpringBootApplication", "@EnableConfigServer"));
 		importMap.put(cloudConfigServer, Arrays.asList(
 				"org.springframework.boot.autoconfigure.SpringBootApplication",
-				"org.springframework.cloud.client.discovery.EnableDiscoveryClient"));
+				"org.springframework.cloud.config.server.EnableConfigServer"));
 
 		// Cloud Eureka Server
 		annotationMap.put(cloudEurekaServer, Arrays.asList("@SpringBootApplication", "@EnableEurekaServer"));
