@@ -37,7 +37,7 @@ public class InitializrMetadata {
 
 	private final DependenciesCapability dependencies = new DependenciesCapability();
 
-	private final ServiceModuleCapability serviceModules = new ServiceModuleCapability();
+	private final ServiceModuleCapability services = new ServiceModuleCapability();
 
 	private final TypeCapability types = new TypeCapability();
 
@@ -87,7 +87,7 @@ public class InitializrMetadata {
 	}
 
 	public ServiceModuleCapability getServices() {
-		return this.serviceModules;
+		return this.services;
 	}
 
 	public TypeCapability getTypes() {
@@ -141,7 +141,7 @@ public class InitializrMetadata {
 	public void merge(InitializrMetadata other) {
 		this.configuration.merge(other.configuration);
 		this.dependencies.merge(other.dependencies);
-		this.serviceModules.merge(other.serviceModules);
+		this.services.merge(other.services);
 		this.types.merge(other.types);
 		this.bootVersions.merge(other.bootVersions);
 		this.packagings.merge(other.packagings);
@@ -161,7 +161,7 @@ public class InitializrMetadata {
 	public void validate() {
 		this.configuration.validate();
 		this.dependencies.validate();
-		this.serviceModules.validate();
+		this.services.validate();
 
 		Map<String, Repository> repositories = this.configuration.getEnv()
 				.getRepositories();
