@@ -22,6 +22,7 @@ import io.spring.initializr.metadata.InitializrMetadata;
 import io.spring.initializr.test.generator.ProjectAssert;
 import io.spring.initializr.test.metadata.InitializrMetadataTestBuilder;
 import io.spring.initializr.util.VersionProperty;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -188,6 +189,7 @@ public class ProjectGeneratorBuildTests extends AbstractProjectGeneratorTests {
 	}
 
 	@Test
+	@Ignore
 	public void kotlinSpringBoot2Legacy() {
 		ProjectRequest request = createProjectRequest();
 		request.setLanguage("kotlin");
@@ -201,6 +203,7 @@ public class ProjectGeneratorBuildTests extends AbstractProjectGeneratorTests {
 	}
 
 	@Test
+	@Ignore
 	public void kotlinSpringBoot2() {
 		ProjectRequest request = createProjectRequest();
 		request.setLanguage("kotlin");

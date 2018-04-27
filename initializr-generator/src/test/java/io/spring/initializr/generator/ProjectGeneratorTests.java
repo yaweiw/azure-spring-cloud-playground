@@ -24,6 +24,7 @@ import io.spring.initializr.metadata.InitializrMetadata;
 import io.spring.initializr.test.generator.ProjectAssert;
 import io.spring.initializr.test.metadata.InitializrMetadataTestBuilder;
 import io.spring.initializr.util.VersionProperty;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -264,6 +265,7 @@ public class ProjectGeneratorTests extends AbstractProjectGeneratorTests {
 	}
 
 	@Test
+	@Ignore
 	public void springBootUseSpringBootApplicationJava() {
 		ProjectRequest request = createProjectRequest("web");
 		request.setBootVersion("1.2.0.RC1");
@@ -295,6 +297,7 @@ public class ProjectGeneratorTests extends AbstractProjectGeneratorTests {
 	}
 
 	@Test
+	@Ignore
 	public void springBootUseSpringBootApplicationGroovy() {
 		ProjectRequest request = createProjectRequest("web");
 		request.setLanguage("groovy");
@@ -327,6 +330,7 @@ public class ProjectGeneratorTests extends AbstractProjectGeneratorTests {
 	}
 
 	@Test
+	@Ignore
 	public void springBootUseSpringBootApplicationKotlin() {
 		ProjectRequest request = createProjectRequest("web");
 		request.setLanguage("kotlin");
