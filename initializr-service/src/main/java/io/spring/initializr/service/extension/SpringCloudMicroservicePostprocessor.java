@@ -23,9 +23,15 @@ public class SpringCloudMicroservicePostprocessor extends AbstractProjectRequest
     }
 
     @Override
+    public void postProcessBeforeResolution(ProjectRequest request,
+                                           InitializrMetadata metadata){
+        request.setServices(request.getStyle());
+    }
+
+    @Override
     public void postProcessAfterResolution(ProjectRequest request,
                                            InitializrMetadata metadata) {
-        for(String service: request.getStyle()){
+        for(String service: request.getServices()){
             if(!serviceToDependencies.containsKey(service)){
                 throw new IllegalStateException("Unsupported service type " + service);
             }
