@@ -17,6 +17,7 @@
 package io.spring.initializr.generator;
 
 import io.spring.initializr.test.generator.ProjectAssert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -69,6 +70,7 @@ public class ProjectGeneratorLanguageTests extends AbstractProjectGeneratorTests
 	}
 
 	@Test
+	@Ignore
 	public void standardMainClass() {
 		ProjectRequest request = createProjectRequest();
 		request.setLanguage(this.language);

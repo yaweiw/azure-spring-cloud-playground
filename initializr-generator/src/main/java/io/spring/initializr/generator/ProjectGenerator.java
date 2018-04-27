@@ -95,6 +95,48 @@ public class ProjectGenerator {
 
 	private transient Map<String, List<File>> temporaryFiles = new LinkedHashMap<>();
 
+	private final static Map<String, List<String>> annotationMap = new HashMap<>();
+
+	private final static Map<String, List<String>> importMap = new HashMap<>();
+
+	static {
+		final String azureServiceBus = "azure-service-bus";
+		final String cloudConfigServer = "cloud-config-server";
+		final String cloudEurekaServer = "cloud-eureka-server";
+		final String cloudGateway = "cloud-gateway";
+		final String cloudHystrixDashboard = "cloud-hystrix-dashboard";
+
+		// Azure Service Bus
+		annotationMap.put(azureServiceBus, Arrays.asList("@SpringBootApplication", "@EnableDiscoveryClient"));
+		importMap.put(azureServiceBus, Arrays.asList(
+				"org.springframework.boot.autoconfigure.SpringBootApplication",
+				"org.springframework.cloud.client.discovery.EnableDiscoveryClient"));
+
+		// Cloud Config Server
+		annotationMap.put(cloudConfigServer, Arrays.asList("@SpringBootApplication", "@EnableConfigServer"));
+		importMap.put(cloudConfigServer, Arrays.asList(
+				"org.springframework.boot.autoconfigure.SpringBootApplication",
+				"org.springframework.cloud.config.server.EnableConfigServer"));
+
+		// Cloud Eureka Server
+		annotationMap.put(cloudEurekaServer, Arrays.asList("@SpringBootApplication", "@EnableEurekaServer"));
+		importMap.put(cloudEurekaServer, Arrays.asList(
+				"org.springframework.boot.autoconfigure.SpringBootApplication",
+				"org.springframework.cloud.netflix.eureka.server.EnableEurekaServer"));
+
+		// Cloud Gateway
+		annotationMap.put(cloudGateway, Arrays.asList("@SpringBootApplication", "@EnableDiscoveryClient"));
+		importMap.put(cloudGateway, Arrays.asList(
+				"org.springframework.boot.autoconfigure.SpringBootApplication",
+				"org.springframework.cloud.client.discovery.EnableDiscoveryClient"));
+
+		// Cloud Hystrix Dashboard
+		annotationMap.put(cloudHystrixDashboard, Arrays.asList("@SpringBootApplication", "@EnableDiscoveryClient"));
+		importMap.put(cloudHystrixDashboard, Arrays.asList(
+				"org.springframework.boot.autoconfigure.SpringBootApplication",
+				"org.springframework.cloud.client.discovery.EnableDiscoveryClient"));
+	}
+
 	public InitializrMetadataProvider getMetadataProvider() {
 		return this.metadataProvider;
 	}
@@ -632,9 +674,10 @@ public class ProjectGenerator {
 		Annotations annotations = new Annotations();
 		boolean useSpringBootApplication = VERSION_1_2_0_RC1
 				.compareTo(Version.safeParse(request.getBootVersion())) <= 0;
-		if (useSpringBootApplication) {
-			imports.add("org.springframework.boot.autoconfigure.SpringBootApplication");
-			annotations.add("@SpringBootApplication");
+
+		if (importMap.containsKey(request.getName()) && annotationMap.containsKey(request.getName())) {
+			importMap.get(request.getName()).forEach(imports::add);
+			annotationMap.get(request.getName()).forEach(annotations::add);
 		}
 		else {
 			imports.add("org.springframework.boot.autoconfigure.EnableAutoConfiguration")
