@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,7 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StreamUtils;
@@ -219,6 +221,26 @@ public class ProjectGenerator {
 		}
 	}
 
+	private void generateDockerStructure(@NonNull File rootDir, @NonNull String baseDir) {
+		final File dockerDir = Paths.get(rootDir.getPath(),baseDir, "docker").toFile();
+		final String template = "docker";
+		final String dockerFileName = "Dockerfile";
+		final String dockerComposeName = "docker-compose.yml";
+		final String dockerRunScript = "docker_run.sh";
+		final String collectScript = "collect_packages.sh";
+		final String runScript = "run.sh";
+		final String readMe = "README.md";
+
+		dockerDir.mkdir();
+
+		writeText(new File(dockerDir, dockerFileName), templateRenderer.process(Paths.get(template, dockerFileName).toString(), null));
+		writeText(new File(dockerDir, dockerComposeName), templateRenderer.process(Paths.get(template, dockerComposeName).toString(), null));
+		writeText(new File(dockerDir, dockerRunScript), templateRenderer.process(Paths.get(template, dockerRunScript).toString(), null));
+		writeText(new File(dockerDir, collectScript), templateRenderer.process(Paths.get(template, collectScript).toString(), null));
+		writeText(new File(dockerDir, runScript), templateRenderer.process(Paths.get(template, runScript).toString(), null));
+		writeText(new File(dockerDir, readMe), templateRenderer.process(Paths.get(template, readMe).toString(), null));
+	}
+
 	/**
 	 * Generate a project structure for the specified {@link ProjectRequest}. Returns a
 	 * directory containing the project.
@@ -229,11 +251,15 @@ public class ProjectGenerator {
 		try {
 			Map<String, Object> model = resolveModel(request);
 			File rootDir = generateProjectStructure(request, model);
+
 			for(ProjectRequest subModule: request.getModules()){
 				generateProjectModuleStructure(subModule, resolveModel(subModule),
 						new File(rootDir, request.getBaseDir()), request);
 			}
+
+			generateDockerStructure(rootDir, request.getBaseDir());
 			publishProjectGeneratedEvent(request);
+
 			return rootDir;
 		}
 		catch (InitializrException ex) {
