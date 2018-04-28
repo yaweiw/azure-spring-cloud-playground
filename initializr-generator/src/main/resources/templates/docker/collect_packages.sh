@@ -3,12 +3,14 @@
 target_dir=../
 packages_dir=packages
 basename=$(basename $(pwd))
+execute_script=docker_run.sh
 
 if [ -d $packages_dir ]; then
     rm -rf $packages_dir
 fi
 
 mkdir $packages_dir
+cp -v $execute_script $packages_dir
 
 for dir in $(ls $target_dir)
 do
@@ -20,4 +22,3 @@ do
         cp -v $sub_dir/target/*.jar $packages_dir
     fi
 done
-

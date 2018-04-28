@@ -1,7 +1,7 @@
 app:
   build: .
-  command: bash /packages/docker_run.sh
   ports:
     - "8888:8888"
     - "8761:8761"
+
 

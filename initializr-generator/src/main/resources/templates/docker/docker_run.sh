@@ -1,29 +1,40 @@
 #!/bin/bash
 
 packages_dir="packages"
+time_wait=15
 
 java -jar $packages_dir/demo.cloud-config-server-0.0.1-SNAPSHOT.jar &
-sleep 15
+sleep $time_wait
 
 java -jar $packages_dir/demo.cloud-eureka-server-0.0.1-SNAPSHOT.jar &
-sleep 15
+sleep $time_wait
 
-for dir in $(ls $packages_dir)
+for file in $(ls $packages_dir)
 do
-    if [[ $dir = *.jar ]]; then
-        if [[ $dir = *cloud-config-server* ]]; then
+    if [[ $file = *.jar ]]; then
+        if [[ $file = *cloud-config-server* ]]; then
            continue
-        elif [[ $dir = *cloud-eureka-server* ]]; then
+        elif [[ $file = *cloud-eureka-server* ]]; then
            continue
-        elif [[ $dir = *cloud-gateway* ]]; then
+        elif [[ $file = *cloud-gateway* ]]; then
            continue
         fi
 
-        java -jar $packages_dir/$dir &
+        java -jar $packages_dir/$file &
+        sleep $time_wait
     fi
 done
 
 java -jar $packages_dir/demo.cloud-gateway-0.0.1-SNAPSHOT.jar &
+sleep $time_wait
 
-sleep 200
+heartbeat=5
+count=0
 
+while true
+do
+    echo "docker_run.sh heartbeat -^v- $count"
+    count=$[$count+1]
+
+    sleep $heartbeat
+done
