@@ -1,0 +1,47 @@
+.azure-logo img {
+    max-height: 3.75rem !important;
+}
+
+.header-nav {
+    min-height: 4.25rem !important;
+    background-color: black !important;
+    padding: 0.25rem 0;
+}
+
+.hidden {
+    display: none !important;
+}
+
+.metadata-row {
+    margin: 3rem 0 1rem;
+}
+
+.large-vertical-margin {
+    margin: 4rem 0;
+}
+
+.small-top-margin {
+    margin: 1rem 0 0;
+}
+
+.medium-top-margin {
+    margin: 2rem 0 0;
+}
+
+.module-checkbox {
+    padding-left: 20px;
+}
+
+.module-checkbox input {
+    margin-left: -20px;
+}
+
+.module-checkbox p {
+    margin: 2px 0 0 -2px;
+    color: grey;
+}
+
+body, button, input, p, select, textarea, label, h1, h2, h3, h4 {
+    font-weight: 400;
+    font-family: 'Segoe UI',SegoeUI,'Segoe WP',Tahoma,Arial,sans-serif;
+}

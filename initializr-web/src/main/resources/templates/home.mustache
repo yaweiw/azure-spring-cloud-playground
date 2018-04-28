@@ -3,9 +3,8 @@
 <head>
     <title>Azure Spring Cloud Playground</title>
     <link href="//fonts.googleapis.com/css?family=Varela+Round|Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="{{#linkTo}}/css/bootstrap.min.css{{/linkTo}}"/>
-    <link rel="stylesheet" href="{{#linkTo}}/css/bootstrap-theme.min.css{{/linkTo}}"/>
-    <link rel="stylesheet" href="{{#linkTo}}/css/spring.css{{/linkTo}}"/>
+    <link rel="stylesheet" href="{{#linkTo}}/css/customize.css{{/linkTo}}"/>
+    <link rel="stylesheet" href="{{#linkTo}}/css/bulma.min.css{{/linkTo}}"/>
     <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.png"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {{#trackingCode}}
@@ -18,57 +17,68 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 </head>
 <body>
 <form id="form" action="/starter.zip" method="get" role="form">
-    <div class="container-fluid">
-        <div class="row start-header">
-            <div class="container">
-                <h1>Azure Spring Cloud Playground <small>generate your Spring Cloud application</small></h1>
+    <nav class="navbar header-nav" role="navigation" aria-label="main navigation">
+        <div class="container">
+            <div class="navbar-brand">
+                <a class="navbar-item azure-logo">
+                    <img src="{{#linkTo}}/img/azure_logo.png{{/linkTo}}" alt="Microsoft Azure">
+                </a>
+            </div>
+            <div class="navbar-menu">
+                <div class="navbar-start">
+                    <h1 class="navbar-item title has-text-white" >
+                        Azure Spring Cloud Playground
+                    </h1>
+                </div>
             </div>
         </div>
-        <div class="container start-main">
+    </nav>
+    <div class="container">
+        <div class="container">
             <input id="baseDir" name="baseDir" type="hidden" value="{{artifactId.content}}">
 
-            <div class="row">
-                <h2>Project Metadata</h2>
-                <p>Artifact coordinates</p>
-                <div class="col-sm-12 col-md-6">
-                    <div class="form-group groupid-form-group">
-                        <label for="groupId" class="control-label">{{groupId.title}}</label>
-                        <input tabindex="4" id="groupId" class="form-control" type="text" value="{{groupId.content}}"
+            <div class="row metadata-row">
+                <h4 class="title is-5">Generate your Spring Cloud application</h4>
+                <div class="columns">
+                    <div class="column">
+                        <label for="groupId" class="label">{{groupId.title}}</label>
+                        <input tabindex="4" id="groupId" class="input is-info" type="text" value="{{groupId.content}}"
                                name="groupId">
                     </div>
-                    <div class="form-group artifactid-form-group">
-                        <label for="artifactId" class="control-label">{{artifactId.title}}</label>
-                        <input tabindex="5" id="artifactId" class="form-control" type="text"
+                    <div class="column">
+                        <label for="artifactId" class="label">{{artifactId.title}}</label>
+                        <input tabindex="5" id="artifactId" class="input is-info" type="text"
                                value="{{artifactId.content}}"
                                name="artifactId">
                     </div>
-                    <div class="form-group full hidden name-form-group">
-                        <label for="name" class="control-label">{{name.title}}</label>
-                        <input tabindex="6" id="name" class="form-control" type="text" value="{{name.content}}"
+                    <div class="column hidden">
+                        <label for="name" class="label">{{name.title}}</label>
+                        <input tabindex="6" id="name" class="input" type="text" value="{{name.content}}"
                                name="name">
                     </div>
-                    <div class="form-group full hidden description-form-group">
-                        <label for="description" class="control-label">{{description.title}}</label>
-                        <input tabindex="7" id="description" class="form-control" type="text"
+                    <div class="column hidden">
+                        <label for="description" class="label">{{description.title}}</label>
+                        <input tabindex="7" id="description" class="input" type="text"
                                value="{{description.content}}" name="description">
                     </div>
-                    <div class="form-group full hidden packagename-form-group">
-                        <label for="packageName" class="control-label">{{packageName.title}}</label>
-                        <input tabindex="8" id="packageName" class="form-control" type="text"
+                    <div class="column hidden">
+                        <label for="packageName" class="label">{{packageName.title}}</label>
+                        <input tabindex="8" id="packageName" class="input" type="text"
                                value="{{packageName.content}}"
                                name="packageName">
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div id="services" class="full">
+                <div id="services" class="columns">
                     {{#services.content}}
-                    <div class="form-group col-sm-6">
-                        <h3>{{name}}</h3>
+                    <div class="column is-half medium-top-margin">
+                        <h3 class="title is-6">Select {{name}}</h3>
                         {{#content}}
-                        <div class="checkbox">
-                            <label>
-                                <input tabindex="13" type="checkbox" name="style" value="{{id}}">{{name}}
+                        <div class="small-top-margin">
+                            <label class="checkbox module-checkbox">
+                                <input tabindex="13" type="checkbox" name="style" value="{{id}}">
+                                {{name}}
                                 <p class="help-block">{{#description}}{{.}}{{/description}}</p>
                             </label>
                         </div>
@@ -77,9 +87,9 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
                    {{/services.content}}
                 </div>
             </div>
-            <div class="row">
-                <p class="text-center">
-                    <button tabindex="12" name="generate-project" type="submit" class="btn btn-lg btn-primary"
+            <div class="large-vertical-margin">
+                <p class="has-text-centered">
+                    <button tabindex="12" name="generate-project" type="submit" class="button is-info"
                             role="button">
                         Generate Project
                     </button>
@@ -91,6 +101,7 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
 <script src="{{#linkTo}}/js/jquery-3.1.1.min.js{{/linkTo}}"></script>
 <script src="{{#linkTo}}/js/typeahead.bundle.min.js{{/linkTo}}"></script>
 <script src="{{#linkTo}}/js/mousetrap.min.js{{/linkTo}}"></script>
+<script src="{{#linkTo}}/js/all.js{{/linkTo}}"></script>
 <script src="{{#linkTo}}/js/start.js{{/linkTo}}"></script>
 </body>
 </html>
