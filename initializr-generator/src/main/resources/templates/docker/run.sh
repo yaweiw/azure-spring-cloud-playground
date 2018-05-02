@@ -1,10 +1,4 @@
 #!/bin/bash
 
-echo && echo "==================== Build Packages ========================="
-cd ../ && mvn clean package -Dmaven.test.skip=true
-
-echo && echo "==================== Build docker images ===================="
-mvn dockerfile:build
-
-echo && echo "==================== Start Docker ==========================="
-cd docker && docker-compose up --build
+echo && echo "==================== Build packages, images and launch containers ========================="
+cd ../ && mvn clean package -Dmaven.test.skip=true && mvn dockerfile:build && cd docker && docker-compose up --build

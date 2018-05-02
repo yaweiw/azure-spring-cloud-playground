@@ -16,6 +16,23 @@
 
 package io.spring.initializr.generator;
 
+import io.spring.initializr.InitializrException;
+import io.spring.initializr.metadata.*;
+import io.spring.initializr.metadata.InitializrConfiguration.Env.Maven.ParentPom;
+import io.spring.initializr.util.TemplateRenderer;
+import io.spring.initializr.util.Version;
+import io.spring.initializr.util.VersionProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanWrapperImpl;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.lang.NonNull;
+import org.springframework.util.Assert;
+import org.springframework.util.FileSystemUtils;
+import org.springframework.util.StreamUtils;
+
 import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,24 +42,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import io.spring.initializr.InitializrException;
-import io.spring.initializr.metadata.*;
-import io.spring.initializr.metadata.InitializrConfiguration.Env.Maven.ParentPom;
-import io.spring.initializr.util.TemplateRenderer;
-import io.spring.initializr.util.Version;
-import io.spring.initializr.util.VersionProperty;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import org.springframework.beans.BeanWrapperImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.lang.NonNull;
-import org.springframework.util.Assert;
-import org.springframework.util.FileSystemUtils;
-import org.springframework.util.StreamUtils;
 
 /**
  * Generate a project based on the configured metadata.
@@ -232,13 +231,15 @@ public class ProjectGenerator {
 		final File dockerDir = Paths.get(rootDir.getPath(),baseDir, "docker").toFile();
 		final String template = "docker";
 		final String dockerComposeName = "docker-compose.yml";
-		final String runScript = "run.sh";
+		final String runBash = "run.sh";
+		final String runCmd = "run.cmd";
 		final String readMe = "README.md";
 
 		dockerDir.mkdir();
 
 		writeText(new File(dockerDir, dockerComposeName), templateRenderer.process(Paths.get(template, dockerComposeName).toString(), modulesModel));
-		writeText(new File(dockerDir, runScript), templateRenderer.process(Paths.get(template, runScript).toString(), null));
+		writeText(new File(dockerDir, runBash), templateRenderer.process(Paths.get(template, runBash).toString(), null));
+		writeText(new File(dockerDir, runCmd), templateRenderer.process(Paths.get(template, runCmd).toString(), null));
 		writeText(new File(dockerDir, readMe), templateRenderer.process(Paths.get(template, readMe).toString(), null));
 	}
 
