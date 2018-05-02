@@ -356,6 +356,10 @@ public class ProjectGenerator {
 		write(new File(src, applicationName + "." + extension),
 				"Application." + extension, model);
 
+		if (request.getDependencies().contains("web")) {
+			write(new File(src, "Controller." + extension), "Controller.java" , model);
+		}
+
 		if ("war".equals(request.getPackaging())) {
 			String fileName = "ServletInitializer." + extension;
 			write(new File(src, fileName), fileName, model);
