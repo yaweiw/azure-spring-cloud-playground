@@ -43,7 +43,7 @@ services:
       eureka-server:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://service-bus-server:8081"]
+      test: ["CMD", "curl", "-f", "http://service-bus-server:8081/azure-service-bus/actuator/health"]
       interval: 5s
       retries: 20
 {{/azure-service-bus}}
@@ -74,5 +74,9 @@ services:
     depends_on:
       service-bus-server:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://gateway-server:8080/actuator/health"]
+      interval: 5s
+      retries: 20
 {{/cloud-gateway}}
 
