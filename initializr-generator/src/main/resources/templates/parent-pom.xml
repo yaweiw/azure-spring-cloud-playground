@@ -25,6 +25,8 @@
 		{{#buildPropertiesVersions}}
 		<{{key}}>{{#value}}{{.}}{{/value}}</{{key}}>
 		{{/buildPropertiesVersions}}
+		<dockerfile.maven.version>1.4.0</dockerfile.maven.version>
+		<dockerfile.skip>true</dockerfile.skip>
 	</properties>
 
 	<modules>
@@ -128,6 +130,27 @@
 				</dependencies>
 			</plugin>
 			{{/kotlin}}
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>${dockerfile.maven.version}</version>
+				<executions>
+					<execution>
+						<id>default</id>
+						<goals>
+							<goal>push</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<repository>demo/${project.name}</repository>
+					<!--<tag>${project.version}</tag>-->
+					<buildArgs>
+						<JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+					</buildArgs>
+					<skip>${dockerfile.skip}</skip>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 {{#hasRepositories}}

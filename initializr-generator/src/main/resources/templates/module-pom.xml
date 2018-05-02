@@ -25,6 +25,7 @@
 		{{#buildPropertiesVersions}}
 		<{{key}}>{{#value}}{{.}}{{/value}}</{{key}}>
 		{{/buildPropertiesVersions}}
+		<dockerfile.skip>false</dockerfile.skip>
 	</properties>
 
 	<dependencies>

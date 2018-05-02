@@ -19,7 +19,7 @@ public class SpringCloudMicroservicePostprocessor extends AbstractProjectRequest
         serviceToDependencies.put("cloud-gateway", Arrays.asList("cloud-gateway", "cloud-eureka-client"));
         serviceToDependencies.put("cloud-eureka-server", Arrays.asList("cloud-eureka-server", "cloud-config-client"));
         serviceToDependencies.put("cloud-hystrix-dashboard", Arrays.asList("cloud-hystrix-dashboard", "cloud-config-client", "cloud-eureka-client"));
-        serviceToDependencies.put("azure-service-bus", Arrays.asList("azure-service-bus", "cloud-config-client", "cloud-eureka-client", "web"));
+        serviceToDependencies.put("azure-service-bus", Arrays.asList("azure-service-bus", "cloud-eureka-client", "cloud-config-client", "web"));
     }
 
     @Override

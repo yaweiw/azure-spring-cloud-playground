@@ -22,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,6 +39,7 @@ import org.springframework.beans.BeanWrapperImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.lang.NonNull;
 import org.springframework.util.Assert;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.util.StreamUtils;
@@ -99,6 +101,8 @@ public class ProjectGenerator {
 
 	private final static Map<String, List<String>> importMap = new HashMap<>();
 
+	private final static Map<String, Integer> portMap = new HashMap<>();
+
 	static {
 		final String azureServiceBus = "azure-service-bus";
 		final String cloudConfigServer = "cloud-config-server";
@@ -111,24 +115,28 @@ public class ProjectGenerator {
 		importMap.put(azureServiceBus, Arrays.asList(
 				"org.springframework.boot.autoconfigure.SpringBootApplication",
 				"org.springframework.cloud.client.discovery.EnableDiscoveryClient"));
+		portMap.put(azureServiceBus, 8081);
 
 		// Cloud Config Server
 		annotationMap.put(cloudConfigServer, Arrays.asList("@SpringBootApplication", "@EnableConfigServer"));
 		importMap.put(cloudConfigServer, Arrays.asList(
 				"org.springframework.boot.autoconfigure.SpringBootApplication",
 				"org.springframework.cloud.config.server.EnableConfigServer"));
+		portMap.put(cloudConfigServer, 8888);
 
 		// Cloud Eureka Server
 		annotationMap.put(cloudEurekaServer, Arrays.asList("@SpringBootApplication", "@EnableEurekaServer"));
 		importMap.put(cloudEurekaServer, Arrays.asList(
 				"org.springframework.boot.autoconfigure.SpringBootApplication",
 				"org.springframework.cloud.netflix.eureka.server.EnableEurekaServer"));
+		portMap.put(cloudEurekaServer, 8761);
 
 		// Cloud Gateway
 		annotationMap.put(cloudGateway, Arrays.asList("@SpringBootApplication", "@EnableDiscoveryClient"));
 		importMap.put(cloudGateway, Arrays.asList(
 				"org.springframework.boot.autoconfigure.SpringBootApplication",
 				"org.springframework.cloud.client.discovery.EnableDiscoveryClient"));
+		portMap.put(cloudGateway, 8080);
 
 		// Cloud Hystrix Dashboard
 		annotationMap.put(cloudHystrixDashboard, Arrays.asList("@SpringBootApplication", "@EnableDiscoveryClient", "@EnableHystrixDashboard"));
@@ -136,6 +144,7 @@ public class ProjectGenerator {
 				"org.springframework.boot.autoconfigure.SpringBootApplication",
 				"org.springframework.cloud.client.discovery.EnableDiscoveryClient",
 				"org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard"));
+		portMap.put(cloudHystrixDashboard, 7979);
 	}
 
 	public InitializrMetadataProvider getMetadataProvider() {
@@ -219,6 +228,20 @@ public class ProjectGenerator {
 		}
 	}
 
+	private void generateDockerStructure(@NonNull File rootDir, @NonNull String baseDir, Map<String, Boolean> modulesModel) {
+		final File dockerDir = Paths.get(rootDir.getPath(),baseDir, "docker").toFile();
+		final String template = "docker";
+		final String dockerComposeName = "docker-compose.yml";
+		final String runScript = "run.sh";
+		final String readMe = "README.md";
+
+		dockerDir.mkdir();
+
+		writeText(new File(dockerDir, dockerComposeName), templateRenderer.process(Paths.get(template, dockerComposeName).toString(), modulesModel));
+		writeText(new File(dockerDir, runScript), templateRenderer.process(Paths.get(template, runScript).toString(), null));
+		writeText(new File(dockerDir, readMe), templateRenderer.process(Paths.get(template, readMe).toString(), null));
+	}
+
 	/**
 	 * Generate a project structure for the specified {@link ProjectRequest}. Returns a
 	 * directory containing the project.
@@ -229,11 +252,17 @@ public class ProjectGenerator {
 		try {
 			Map<String, Object> model = resolveModel(request);
 			File rootDir = generateProjectStructure(request, model);
+
+			final Map<String, Boolean> modulesModel = new HashMap<>();
 			for(ProjectRequest subModule: request.getModules()){
 				generateProjectModuleStructure(subModule, resolveModel(subModule),
 						new File(rootDir, request.getBaseDir()), request);
+				modulesModel.put(subModule.getName(), Boolean.TRUE);
 			}
+
+			generateDockerStructure(rootDir, request.getBaseDir(), modulesModel);
 			publishProjectGeneratedEvent(request);
+
 			return rootDir;
 		}
 		catch (InitializrException ex) {
@@ -300,6 +329,18 @@ public class ProjectGenerator {
 			writeText(new File(dir, "settings.gradle"), settings);
 		}
 		else {
+			final String dockerFileName = "Dockerfile";
+			final String exposePortVariable = "EXPOSE_PORT";
+			final String dockerTemplateDir = "docker";
+			final Map<String, Integer> portModel = new HashMap<>();
+			portModel.put(exposePortVariable, portMap.get(request.getName()));
+
+			// Write Dockerfile to module
+			log.info("Writing Dockerfile to module " + request.getName());
+			writeText(new File(dir, dockerFileName),
+					templateRenderer.process(Paths.get(dockerTemplateDir, dockerFileName).toString(), portModel));
+
+			// Write pom file
 			String pom = new String(doGenerateMavenPom(model, "module-pom.xml"));
 			writeText(new File(dir, "pom.xml"), pom);
 		}
@@ -373,7 +414,7 @@ public class ProjectGenerator {
 					model.put("services", nonBasicServices);
 				} else if(!ModulePropertiesResolver.isInfraModule(moduleName)){
 					model.put("applicationName", module.getName());
-					model.put("port", randomPort());
+					model.put("port", getPort(module.getName()));
 				}
 
 				String content = templateRenderer.process(templateFile, model);
@@ -394,9 +435,9 @@ public class ProjectGenerator {
 		writeText(new File(resourceDir, "bootstrap.yml"), content);
 	}
 
-	private int randomPort() {
-		// Generate random port between 9100 and 9200
-		return new Random().nextInt(100) + 9100;
+	private int getPort(String serviceName) {
+
+		return portMap.get(serviceName);
 	}
 
 	/**
