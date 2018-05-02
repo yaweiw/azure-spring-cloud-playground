@@ -675,6 +675,8 @@ public class ProjectGenerator {
 			imports.add("org.springframework.test.context.web.WebAppConfiguration");
 			testAnnotations.add("@WebAppConfiguration");
 		}
+		imports.add("org.junit.Ignore");
+		testAnnotations.add("@Ignore");
 		model.put("testImports", imports.withFinalCarriageReturn().toString());
 		model.put("testAnnotations",
 				testAnnotations.withFinalCarriageReturn().toString());
