@@ -1021,6 +1021,16 @@ initializr:
           description: Distributed tracing with an existing Zipkin installation and spring-cloud-sleuth-zipkin. Alternatively, consider Sleuth Stream.
           groupId: org.springframework.cloud
           artifactId: spring-cloud-starter-zipkin
+        - name: Zipkin Server
+          id: zipkin-server
+          description: Zipkin Server
+          groupId: io.zipkin.java
+          artifactId: zipkin-server
+        - name: Zipkin Server UI
+          id: zipkin-server-ui
+          description: Zipkin Server
+          groupId: io.zipkin.java
+          artifactId: zipkin-autoconfigure-ui
     - name: Cloud Messaging
       bom: spring-cloud
       versionRange: 1.2.3.RELEASE
@@ -1322,9 +1332,6 @@ initializr:
         - name: Spring Cloud Hystrix Dashboard
           id: cloud-hystrix-dashboard
           description: Circuit breaker dashboard with spring-cloud-netflix Hystrix
-        - name: Spring Cloud Ribbon
-          id: cloud-ribbon
-          description: Client side load balancing with spring-cloud-netflix and Ribbon
     - name: Azure Spring Cloud Modules
       content:
         - name: Azure Service Bus
