@@ -1,5 +1,5 @@
 .azure-logo img {
-    max-height: 3.75rem !important;
+    max-height: 3rem !important;
 }
 
 .header-nav {
@@ -44,4 +44,25 @@
 body, button, input, p, select, textarea, label, h1, h2, h3, h4 {
     font-weight: 400;
     font-family: 'Segoe UI',SegoeUI,'Segoe WP',Tahoma,Arial,sans-serif;
+}
+
+#login_link, #logout_link, #free_link {
+    align-items: center;
+    margin-left: 2rem;
+}
+
+.small-container {
+    max-width: 1152px !important;
+    width: 1152px !important;
+}
+
+#free_link a{
+    background-color: transparent;
+    color: #89c402;
+    font-weight: 600;
+}
+
+#generate-project {
+    background-color: #3273dc;
+    color: #fff;
 }
