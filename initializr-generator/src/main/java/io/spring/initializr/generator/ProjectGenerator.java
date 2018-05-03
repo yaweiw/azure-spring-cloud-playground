@@ -312,8 +312,15 @@ public class ProjectGenerator {
 				request.getPackageName().replace(".", "/"));
 		src.mkdirs();
 		String extension = ("kotlin".equals(language) ? "kt" : language);
-		write(new File(src, applicationName + "." + extension),
-				"Application." + extension, model);
+		if(request.getName().equalsIgnoreCase("cloud-hystrix-dashboard")){
+			write(new File(src, applicationName + "." + extension),
+					"HystrixDashboardApplication." + extension, model);
+			write(new File(src, "MockStreamServlet.java"),
+					"MockStreamServlet.java", model);
+		} else {
+			write(new File(src, applicationName + "." + extension),
+					"Application." + extension, model);
+		}
 
 		if ("war".equals(request.getPackaging())) {
 			String fileName = "ServletInitializer." + extension;
@@ -330,6 +337,10 @@ public class ProjectGenerator {
 		File resources = new File(dir, "src/main/resources");
 		resources.mkdirs();
 		writePropertiesFile(request, resources, parentModule);
+
+		if(request.getName().equalsIgnoreCase("cloud-hystrix-dashboard")){
+			writeTextResource(resources, "hystrix.stream", "hystrix.stream");
+		}
 
 		if (request.hasWebFacet()) {
 			new File(dir, "src/main/resources/templates").mkdirs();
