@@ -61,9 +61,6 @@ services:
       - config-server
     ports:
       - "9999:9999"
-    depends_on:
-      service-bus-server:
-        condition: service_healthy
     healthcheck:
       test: ["CMD", "curl", "-f", "http://gateway-server:8080/actuator/health"]
       interval: 5s

@@ -1334,22 +1334,22 @@ initializr:
           description: Circuit breaker dashboard with spring-cloud-netflix Hystrix
     - name: Azure Spring Cloud Modules
       content:
-        - name: Spring Cloud Security (Azure Active Directory)
+        - name: Security (Azure Active Directory)
           id: azure-active-directory
           description: Spring Cloud Security with Azure AD and Azure AD B2C backend
-        - name: Spring Cloud Messaging (Azure Service Bus)
+        - name: Messaging (Azure Service Bus)
           id: azure-service-bus
           description: Spring Cloud Messaging API implementation for Azure Service Bus
-        - name: Spring Cloud Messaging (Azure Queue Storage)
+        - name: Messaging (Azure Queue Storage)
           id: azure-queue-storage
           description: Spring Cloud Messaging API implementation for Azure Queue Storage
-        - name: Spring Cloud Stream (Azure Event Hub)
+        - name: Stream (Azure Event Hub)
           id: azure-event-hub
           description: Spring Cloud Stream Binder for Azure Event Hub
-        - name: Spring Cloud Stream (Azure SignalR Service)
+        - name: Stream (Azure SignalR Service)
           id: azure-signalr-service
           description: Spring Cloud Stream Binder for Azure SignalR Service
-        - name: Spring Cloud Vault (Azure Key Vault)
+        - name: Vault (Azure Key Vault)
           id: azure-key-vault
           description: Spring Cloud Vault with Azure Key Vault backend
 
