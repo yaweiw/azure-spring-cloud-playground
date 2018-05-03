@@ -135,7 +135,7 @@ public class ProjectGenerator {
 		importMap.put(cloudGateway, Arrays.asList(
 				"org.springframework.boot.autoconfigure.SpringBootApplication",
 				"org.springframework.cloud.client.discovery.EnableDiscoveryClient"));
-		portMap.put(cloudGateway, 8080);
+		portMap.put(cloudGateway, 9999);
 
 		// Cloud Hystrix Dashboard
 		annotationMap.put(cloudHystrixDashboard, Arrays.asList("@SpringBootApplication", "@EnableDiscoveryClient", "@EnableHystrixDashboard"));
