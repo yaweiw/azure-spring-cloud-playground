@@ -3,8 +3,8 @@
 <head>
     <title>Azure Spring Cloud Playground</title>
     <link href="//fonts.googleapis.com/css?family=Varela+Round|Montserrat:400,700" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" href="{{#linkTo}}/css/customize.css{{/linkTo}}"/>
     <link rel="stylesheet" href="{{#linkTo}}/css/bulma.min.css{{/linkTo}}"/>
+    <link rel="stylesheet" href="{{#linkTo}}/css/customize.css{{/linkTo}}"/>
     <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {{#trackingCode}}
@@ -20,13 +20,13 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     <nav class="navbar header-nav" role="navigation" aria-label="main navigation">
         <div class="small-container container">
             <div class="navbar-brand">
-                <a class="navbar-item azure-logo">
-                    <img src="{{#linkTo}}/img/azure_logo.png{{/linkTo}}" alt="Microsoft Azure">
+                <a href="https://azure.microsoft.com/en-us/" class="navbar-item azure-logo">
+                    Microsoft Azure
                 </a>
             </div>
             <div class="navbar-menu is-active">
                 <div class="navbar-start">
-                    <h1 class="navbar-item title has-text-white" >
+                    <h1 class="navbar-item nav-title" >
                         Azure Spring Cloud Playground
                     </h1>
                 </div>
@@ -52,12 +52,12 @@ new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
                 <div class="columns">
                     <div class="column">
                         <label for="groupId" class="label">{{groupId.title}}</label>
-                        <input tabindex="4" id="groupId" class="input is-info" type="text" value="{{groupId.content}}"
+                        <input tabindex="4" id="groupId" class="input" type="text" value="{{groupId.content}}"
                                name="groupId">
                     </div>
                     <div class="column">
                         <label for="artifactId" class="label">{{artifactId.title}}</label>
-                        <input tabindex="5" id="artifactId" class="input is-info" type="text"
+                        <input tabindex="5" id="artifactId" class="input" type="text"
                                value="{{artifactId.content}}"
                                name="artifactId">
                     </div>

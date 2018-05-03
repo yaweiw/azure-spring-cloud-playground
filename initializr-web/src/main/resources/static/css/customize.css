@@ -1,5 +1,7 @@
-.azure-logo img {
-    max-height: 3rem !important;
+.azure-logo {
+    color: #0078d7 !important;
+    font-size: 22px;
+    font-weight: 600;
 }
 
 .header-nav {
@@ -54,6 +56,15 @@ body, button, input, p, select, textarea, label, h1, h2, h3, h4 {
 .small-container {
     max-width: 1152px !important;
     width: 1152px !important;
+}
+
+.nav-title {
+    color: #dedede !important;
+    font-size: 1.75rem;
+}
+
+.button,.file-cta,.file-name,.input,.pagination-ellipsis,.pagination-link,.pagination-next,.pagination-previous,.select select,.textarea {
+    border-radius: 0px;
 }
 
 #free_link a{
