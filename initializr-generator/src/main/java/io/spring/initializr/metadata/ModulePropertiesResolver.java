@@ -13,7 +13,7 @@ public class ModulePropertiesResolver {
     private static final String CONFIG_SERVER_MODULE = "cloud-config-server";
     private static final String GATEWAY_SERVER_MODULE = "cloud-gateway";
 
-    private static final String[] BASIC_CLOUD_MODULES = {"cloud-config-server", "cloud-eureka-server", "cloud-gateway"};
+    private static final String[] BASIC_CLOUD_MODULES = {"cloud-config-server", "cloud-eureka-server", "cloud-gateway", "cloud-hystrix-dashboard"};
 
     private static Map<String, String> bootstrapPropTemplateMap = new HashMap<>();
     private static Map<String, String> sharedPropTemplateMap = new HashMap<>();
