@@ -70,6 +70,9 @@ body, button, input, p, select, textarea, label, h1, h2, h3, h4 {
 #free_link a{
     background-color: transparent;
     color: #89c402;
+}
+
+#login_link a, #logout_link a, #free_link a {
     font-weight: 600;
 }
 
