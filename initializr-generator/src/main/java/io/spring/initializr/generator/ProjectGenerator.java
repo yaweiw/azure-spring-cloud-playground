@@ -96,56 +96,6 @@ public class ProjectGenerator {
 
 	private transient Map<String, List<File>> temporaryFiles = new LinkedHashMap<>();
 
-	private final static Map<String, List<String>> annotationMap = new HashMap<>();
-
-	private final static Map<String, List<String>> importMap = new HashMap<>();
-
-	private final static Map<String, Integer> portMap = new HashMap<>();
-
-	static {
-		final String azureServiceBus = "azure-service-bus";
-		final String cloudConfigServer = "cloud-config-server";
-		final String cloudEurekaServer = "cloud-eureka-server";
-		final String cloudGateway = "cloud-gateway";
-		final String cloudHystrixDashboard = "cloud-hystrix-dashboard";
-
-		// Azure Service Bus
-		annotationMap.put(azureServiceBus, Arrays.asList("@SpringBootApplication", "@EnableDiscoveryClient"));
-		importMap.put(azureServiceBus, Arrays.asList(
-				"org.springframework.boot.autoconfigure.SpringBootApplication",
-				"org.springframework.cloud.client.discovery.EnableDiscoveryClient"));
-		portMap.put(azureServiceBus, 8081);
-
-		// Cloud Config Server
-		annotationMap.put(cloudConfigServer, Arrays.asList("@SpringBootApplication", "@EnableConfigServer"));
-		importMap.put(cloudConfigServer, Arrays.asList(
-				"org.springframework.boot.autoconfigure.SpringBootApplication",
-				"org.springframework.cloud.config.server.EnableConfigServer"));
-		portMap.put(cloudConfigServer, 8888);
-
-		// Cloud Eureka Server
-		annotationMap.put(cloudEurekaServer, Arrays.asList("@SpringBootApplication", "@EnableEurekaServer"));
-		importMap.put(cloudEurekaServer, Arrays.asList(
-				"org.springframework.boot.autoconfigure.SpringBootApplication",
-				"org.springframework.cloud.netflix.eureka.server.EnableEurekaServer"));
-		portMap.put(cloudEurekaServer, 8761);
-
-		// Cloud Gateway
-		annotationMap.put(cloudGateway, Arrays.asList("@SpringBootApplication", "@EnableDiscoveryClient"));
-		importMap.put(cloudGateway, Arrays.asList(
-				"org.springframework.boot.autoconfigure.SpringBootApplication",
-				"org.springframework.cloud.client.discovery.EnableDiscoveryClient"));
-		portMap.put(cloudGateway, 9999);
-
-		// Cloud Hystrix Dashboard
-		annotationMap.put(cloudHystrixDashboard, Arrays.asList("@SpringBootApplication", "@EnableDiscoveryClient", "@EnableHystrixDashboard"));
-		importMap.put(cloudHystrixDashboard, Arrays.asList(
-				"org.springframework.boot.autoconfigure.SpringBootApplication",
-				"org.springframework.cloud.client.discovery.EnableDiscoveryClient",
-				"org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard"));
-		portMap.put(cloudHystrixDashboard, 7979);
-	}
-
 	public InitializrMetadataProvider getMetadataProvider() {
 		return this.metadataProvider;
 	}
@@ -334,7 +284,7 @@ public class ProjectGenerator {
 			final String exposePortVariable = "EXPOSE_PORT";
 			final String dockerTemplateDir = "docker";
 			final Map<String, Integer> portModel = new HashMap<>();
-			portModel.put(exposePortVariable, portMap.get(request.getName()));
+			portModel.put(exposePortVariable, ServiceMetadata.portMap.get(request.getName()));
 
 			// Write Dockerfile to module
 			log.info("Writing Dockerfile to module " + request.getName());
@@ -371,6 +321,19 @@ public class ProjectGenerator {
 		if ("war".equals(request.getPackaging())) {
 			String fileName = "ServletInitializer." + extension;
 			write(new File(src, fileName), fileName, model);
+		}
+
+		// Write index page if is gateway module
+		if(ModulePropertiesResolver.isGatewayModule(request.getName())) {
+			// Only java supported, WebFilter for root request mapping
+			write(new File(src, "CustomWebFilter.java"),"CustomWebFilter.java", model);
+
+			File resourceFolder = new File(dir, "src/main/resources/static");
+			resourceFolder.mkdirs();
+
+			writeText(new File(resourceFolder, "index.html"),
+					templateRenderer.process("GatewayIndex.tmpl", ServiceMetadata.getLinksMap(parentModule)));
+			writeText(new File(resourceFolder, "bulma.min.css"), templateRenderer.process("bulma.min.css",null));
 		}
 
 		File test = new File(new File(dir, "src/test/" + codeLocation),
@@ -452,8 +415,7 @@ public class ProjectGenerator {
 	}
 
 	private int getPort(String serviceName) {
-
-		return portMap.get(serviceName);
+		return ServiceMetadata.portMap.get(serviceName);
 	}
 
 	/**
@@ -700,9 +662,9 @@ public class ProjectGenerator {
 		boolean useSpringBootApplication = VERSION_1_2_0_RC1
 				.compareTo(Version.safeParse(request.getBootVersion())) <= 0;
 
-		if (importMap.containsKey(request.getName()) && annotationMap.containsKey(request.getName())) {
-			importMap.get(request.getName()).forEach(imports::add);
-			annotationMap.get(request.getName()).forEach(annotations::add);
+		if (ServiceMetadata.importMap.containsKey(request.getName()) && ServiceMetadata.annotationMap.containsKey(request.getName())) {
+			ServiceMetadata.importMap.get(request.getName()).forEach(imports::add);
+			ServiceMetadata.annotationMap.get(request.getName()).forEach(annotations::add);
 		}
 		else {
 			imports.add("org.springframework.boot.autoconfigure.EnableAutoConfiguration")
