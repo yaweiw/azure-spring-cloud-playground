@@ -7,17 +7,21 @@ follow https://12factor.net/[The Twelve-Factor App] methodology and are ready to
  with docker compose on local development host or deploy to Kubernetes or Cloud Foundy in the Cloud.
 
 == Getting Started
-* Install Maven[https://maven.apache.org/install.html] and Docker[https://docs.docker.com/install/]
-* Access to https://azure-spring-cloud.azurewebsites.net/
-* Select the modules you'd like to start with and generate the project. If you don't have a Azure Subscription get a free account[https://azure.microsoft.com/en-us/free/].
-* Run the following on Windows:
+* Install https://maven.apache.org/install.html[Maven] and https://docs.docker.com/install/[Docker]
+* Access to https://azure-spring-cloud.azurewebsites.net/[azure-spring-cloud.azurewebsites.net]
+* Sign in with your Azure subscription. If you don't have a Azure subscription get a [https://azure.microsoft.com/en-us/free/]free one.
+* Select the modules you'd like to start with and generate the project.
+* Extract and go to project root directory, run the following:
 ```
 cd docker
 run.cmd (run.sh)
 ```
-* You can now access gateway endpoint at http://localhost:9999
+* After all microservices start, access gateway endpoint at http://localhost:9999
 
 == Deploy to Azure
+TBD
+
+== Architecture
 TBD
 
 == Supported Modules
@@ -32,7 +36,7 @@ The following modules are supported:
 TBD
 
 == Reference
-Spring Initializr[https://github.com/spring-io/initializr]
+https://github.com/spring-io/initializr[Spring Initializr]
 
 == License
 Azure Spring Cloud Playground is released under the
