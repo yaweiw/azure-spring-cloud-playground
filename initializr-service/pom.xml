@@ -115,6 +115,54 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<!--Build Docker Image-->
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>1.4.0</version>
+				<executions>
+					<execution>
+						<id>default</id>
+						<goals>
+							<goal>build</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<repository>${your-docker-image-prefix}/${your-docker-image-name}</repository>
+					<buildArgs>
+						<JAR_FILE>initializr-service.jar</JAR_FILE>
+					</buildArgs>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.microsoft.azure</groupId>
+				<artifactId>azure-webapp-maven-plugin</artifactId>
+				<version>1.1.0</version>
+				<configuration>
+					<authentication>
+						<serverId>azure-auth</serverId>
+					</authentication>
+					<resourceGroup>wingtiptoysresources</resourceGroup>
+					<appName>azure-spring-cloud</appName>
+					<region>japaneast</region>
+
+					<containerSettings>
+						<imageName>${your-docker-image-prefix}/${your-docker-image-name}:${docker-label}</imageName>
+						<registryUrl>https://plincar.azurecr.io</registryUrl>
+						<serverId>azure-auth</serverId>
+					</containerSettings>
+					<appSettings>
+						<property>
+							<name>PORT</name>
+							<value>8080</value>
+						</property>
+					</appSettings>
+				</configuration>
+			</plugin>
+
 		</plugins>
 	</build>
 
