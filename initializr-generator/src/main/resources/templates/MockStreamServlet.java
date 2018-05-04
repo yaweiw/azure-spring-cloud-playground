@@ -1,6 +1,7 @@
 package {{packageName}};
 
-import java.io.File;;
+import java.io.InputStream;
+import java.io.File;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +11,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 
 /**
@@ -89,8 +89,19 @@ public class MockStreamServlet extends HttpServlet {
 
     private String getFileFromPackage(String filename) {
         try {
-            File file = new File(this.getClass().getClassLoader().getResource(filename).getFile());
-            return new String(Files.readAllBytes(file.toPath()));
+            InputStream is = new ClassPathResource(filename).getInputStream();
+            try {
+                /* this is FAR too much work just to get a string from a file */
+                BufferedReader in = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")));
+                StringWriter s = new StringWriter();
+                int c = -1;
+                while ((c = in.read()) > -1) {
+                    s.write(c);
+                }
+                return s.toString();
+            } finally {
+                is.close();
+            }
         } catch (Exception e) {
             throw new RuntimeException("Could not find file: " + filename, e);
         }
