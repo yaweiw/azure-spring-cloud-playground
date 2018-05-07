@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ModulePropertiesResolver {
-    private static final String PROP_TEMPLATE_ROOT_PATH = "/properties/";
+    private static final String PROP_TEMPLATE_ROOT_PATH = "properties/";
     private static final String SHARED_TEMPLATE_PATH = PROP_TEMPLATE_ROOT_PATH + "shared/";
 
     private static final String CONFIG_SERVER_MODULE = "cloud-config-server";

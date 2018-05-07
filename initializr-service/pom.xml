@@ -115,7 +115,52 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<!-- Build Docker Image -->
+			<plugin>
+				<groupId>com.spotify</groupId>
+				<artifactId>dockerfile-maven-plugin</artifactId>
+				<version>1.4.0</version>
+				<executions>
+					<execution>
+						<id>default</id>
+						<goals>
+							<goal>build</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<repository>${your-acr-username}.azurecr.io/azure-spring-cloud</repository>
+					<buildArgs>
+						<JAR_FILE>initializr-service.jar</JAR_FILE>
+					</buildArgs>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>com.microsoft.azure</groupId>
+				<artifactId>azure-webapp-maven-plugin</artifactId>
+				<version>1.1.0</version>
+				<configuration>
+					<authentication>
+						<serverId>${your-azure-server-id}</serverId>
+					</authentication>
+					<resourceGroup>${your-resource-group}</resourceGroup>
+					<appName>${your-application-name}</appName>
+					<region>japaneast</region>
+					<containerSettings>
+						<imageName>${your-acr-username}.azurecr.io/azure-spring-cloud:latest</imageName>
+						<serverId>${your-acr-server-id}</serverId>
+						<registryUrl>https://${your-acr-username}.azurecr.io</registryUrl>
+					</containerSettings>
+					<appSettings>
+						<property>
+							<name>PORT</name>
+							<value>8080</value>
+						</property>
+					</appSettings>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
-
 </project>
