@@ -1,5 +1,4 @@
 FROM openjdk:8-jre-alpine
-MAINTAINER yaweiw@microsoft.com
 RUN apk add --update bash
 RUN apk add --update curl && rm -rf /var/cache/apk/*
 
