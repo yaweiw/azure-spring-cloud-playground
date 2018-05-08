@@ -12,6 +12,14 @@
 
 	<properties>
 		<main.basedir>${basedir}/..</main.basedir>
+		<maven.build.timestamp.format>yyyy_MM_dd-HH_mm</maven.build.timestamp.format>
+		<docker.image.prefix>${your-docker-image-prefix}</docker.image.prefix>
+        <docker.image.name>${your-docker-image-name}</docker.image.name>
+		<docker.image.tag>${maven.build.timestamp}</docker.image.tag>
+		<docker.image>${docker.image.prefix}/${docker.image.name}</docker.image>
+		<azure.authentication.server>${your-azure-authentication-server}</azure.authentication.server>
+		<azure.resource.group>${your-azure-resource-group}</azure.resource.group>
+		<azure.cr.server>${your-azure-cr-server}</azure.cr.server>
 	</properties>
 
 	<dependencies>
@@ -116,6 +124,21 @@
 				</executions>
 			</plugin>
 
+			<!-- Git Commit Id -->
+			<plugin>
+				<groupId>pl.project13.maven</groupId>
+				<artifactId>git-commit-id-plugin</artifactId>
+				<version>2.2.4</version>
+
+				<executions>
+					<execution>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+
 			<!-- Build Docker Image -->
 			<plugin>
 				<groupId>com.spotify</groupId>
@@ -123,18 +146,36 @@
 				<version>1.4.0</version>
 				<executions>
 					<execution>
-						<id>default</id>
+						<id>image-tag-timestamp</id>
+						<phase>package</phase>
 						<goals>
 							<goal>build</goal>
+							<goal>push</goal>
 						</goals>
+						<configuration>
+							<repository>${docker.image}</repository>
+							<tag>${docker.image.tag}</tag>
+							<buildArgs>
+								<JAR_FILE>initializr-service.jar</JAR_FILE>
+							</buildArgs>
+						</configuration>
+					</execution>
+					<execution>
+						<id>image-tag-latest</id>
+						<phase>package</phase>
+						<goals>
+							<goal>build</goal>
+							<goal>push</goal>
+						</goals>
+						<configuration>
+							<repository>${docker.image}</repository>
+							<tag>latest</tag>
+							<buildArgs>
+								<JAR_FILE>initializr-service.jar</JAR_FILE>
+							</buildArgs>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<repository>${your-acr-username}.azurecr.io/azure-spring-cloud</repository>
-					<buildArgs>
-						<JAR_FILE>initializr-service.jar</JAR_FILE>
-					</buildArgs>
-				</configuration>
 			</plugin>
 
 			<plugin>
@@ -143,15 +184,15 @@
 				<version>1.1.0</version>
 				<configuration>
 					<authentication>
-						<serverId>${your-azure-server-id}</serverId>
+						<serverId>${azure.authentication.server}</serverId>
 					</authentication>
-					<resourceGroup>${your-resource-group}</resourceGroup>
-					<appName>${your-application-name}</appName>
+					<resourceGroup>${azure.resource.group}</resourceGroup>
+					<appName>${docker.image.name}</appName>
 					<region>japaneast</region>
 					<containerSettings>
-						<imageName>${your-acr-username}.azurecr.io/azure-spring-cloud:latest</imageName>
-						<serverId>${your-acr-server-id}</serverId>
-						<registryUrl>https://${your-acr-username}.azurecr.io</registryUrl>
+						<imageName>${docker.image}:latest</imageName>
+						<serverId>${azure.cr.server}</serverId>
+						<registryUrl>https://${docker.image.prefix}</registryUrl>
 					</containerSettings>
 					<appSettings>
 						<property>
