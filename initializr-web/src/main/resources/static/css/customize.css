@@ -48,7 +48,7 @@ body, button, input, p, select, textarea, label, h1, h2, h3, h4 {
     font-family: 'Segoe UI',SegoeUI,'Segoe WP',Tahoma,Arial,sans-serif;
 }
 
-#login_link, #logout_link, #free_link {
+#login_link, #user_dropdown, #free_link {
     align-items: center;
     margin-left: 2rem;
 }
@@ -72,11 +72,29 @@ body, button, input, p, select, textarea, label, h1, h2, h3, h4 {
     color: #89c402;
 }
 
-#login_link a, #logout_link a, #free_link a {
+#login_link a, #user_dropdown a, #free_link a {
     font-weight: 600;
 }
 
 #generate-project {
     background-color: #3273dc;
     color: #fff;
+}
+
+.truncate {
+    display: inline-block;
+    width: 12rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+#logout_link {
+    border-radius: 0;
+}
+
+#user_dropdown div {
+    text-align: center;
+    vertical-align: middle;
+    line-height: 2.75rem;
 }

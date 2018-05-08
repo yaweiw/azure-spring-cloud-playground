@@ -1,0 +1,197 @@
+= Deploy `Azure Spring Cloud Playground` to Azure
+
+==== Prerequesites
+
+* An Azure subscription, or sign up for a https://azure.microsoft.com/pricing/free-trial/[free Azure account].
+* The Azure https://docs.microsoft.com/en-us/cli/azure/overview[Azure Command-Line Interface (CLI)].
+* An up-to-date [Java Development Kit (JDK)], version 1.8 or later.
+* Apache's Maven build tool (Version 3).
+* A Git client.
+* A Docker client.
+
+==== Step 1: Create an Azure service principal
+
+* Sign into your Azure account with Azure CLI
+```
+ az login
+```
+* Create an Azure service principal
+```
+ az ad sp create-for-rbac --name "${your-username}" --password "${your-password}"
+```
+* After the service principal is successfully created, the following will be returned, which will be needed in later steps
+
+ {
+    "appId": "${your-appId}",
+    "displayName": "${your-display-name}",
+    "name": "http://${your-user-name}",
+    "password": "${your-password}",
+    "tenant": "${your-tenant-id}"
+ }
+
+==== Step 2: Create an Azure Container Registry (ACR) instance
+
+* Create ACR
+```
+ az acr create --admin-enabled \
+               --resource-group ${your-resource-group} \
+               --location westus \
+               --name ${your-acr-name} \
+               --sku Basic
+```
+* Retrieve the password for your container registry
+```
+ az acr credential show --name ${your-acr-name} --query passwords[0]
+```
+* Your ACR credential will return in following format.
+
+  {
+     "name": "password",
+     "value": "${your-password}"
+  }
+
+==== Step3: Add your ACR and Azure service principal to your maven settings
+
+* Locate your maven settings.xml, it might be in the following path
+```
+ /etc/maven/settings.xml
+ %ProgramFiles%\apache-maven\3.5.0\conf\settings.xml
+ $HOME/.m2/settings.xml
+```
+* Add your ACR access settings like below
+
+ <servers>
+     <server>
+         <id>${your-acr-server-id}</id>
+         <username>${your-acr-id}</username>
+         <password>{your-acr-password}</password>
+     </server>
+ </servers>
+
+* Add your Azure service principal access settings like below
+
+ <servers>
+     <server>
+         <id>${your-azure-server-id}</id>
+         <configuration>
+             <client>${your-app-id}</client>
+             <tenant>${your-tenant}</tenant>
+             <key>${your-password}</key>
+             <environment>AZURE</environment>
+        </configuration>
+     </server>
+ </servers>
+
+* Save and close setting
+
+==== Step4: Config the maven build plugin
+
+* Update the docker build plugin from pom.xml.
+ ** replace ${your-acr-username} with your acr username.
+
+ <plugin>
+     <groupId>com.spotify</groupId>
+     <artifactId>dockerfile-maven-plugin</artifactId>
+     <version>1.4.0</version>
+     <executions>
+         <execution>
+         <id>default</id>
+             <goals>
+                 <goal>build</goal>
+             </goals>
+         </execution>
+     </executions>
+     <configuration>
+         <repository>${your-acr-username}.azurecr.io/azure-spring-cloud</repository>
+         <buildArgs>
+             <JAR_FILE>initializr-service.jar</JAR_FILE>
+         </buildArgs>
+     </configuration>
+ </plugin>
+
+* Update the docker deploy plugin from pom.xml.
+
+ ** replace ${your-azure-server-id} and ${your-acr-server-id} configured in above.
+ ** replace ${your-resource-group} from your azure portal.
+ ** replace ${your-acr-username} from your acr username.
+
+ <plugin>
+    <groupId>com.microsoft.azure</groupId>
+    <artifactId>azure-webapp-maven-plugin</artifactId>
+    <version>1.1.0</version>
+    <configuration>
+        <authentication>
+            <serverId>${your-azure-server-id}</serverId>
+        </authentication>
+        <resourceGroup>${your-resource-group}</resourceGroup>
+        <appName>${your-application-name}</appName>
+        <region>japaneast</region>
+        <containerSettings>
+            <imageName>${your-acr-username}.azurecr.io/azure-spring-cloud:latest</imageName>
+            <serverId>${your-acr-server-id}</serverId>
+            <registryUrl>https://${your-acr-username}.azurecr.io</registryUrl>
+        </containerSettings>
+        <appSettings>
+            <property>
+                <name>PORT</name>
+                <value>8080</value>
+            </property>
+        </appSettings>
+    </configuration>
+ </plugin>
+
+* Update image fullname of script deploy-initializr-service.[sh/cmd]
+ ** replace ${your-acr-username} from your acr username.
+```
+ #!/bin/bash
+ cd ../ && mvn clean package -Dmaven.test.skip=true -Pfull && cd -
+ docker push ${your-acr-username}/azure-spring-cloud:latest && mvn azure-webapp:deploy
+```
+
+==== Troubleshooting
+
+* Docker push failure. Make sure the ACR account exist and you've logged in in via Azure CLI.
+
+ The push refers to repository [${your-acr-account}.azurecr.io/azure-spring-cloud]
+ dd6018674b00: Preparing
+ 9195aaf883df: Preparing
+ 80fafd5ff7c5: Preparing
+ 638d4576a926: Preparing
+ c9b26f41504c: Preparing
+ cd7100a72410: Preparing
+ cd7100a72410: Waiting
+ unauthorized: authentication required
+
+ PS C:\Users\panli> az acr login -n ${your-acr-account}
+ Login Succeeded
+
+* Service unavailable in web application link. You can login to azure portal, find the web application from the App Services and do the following:
+
+ Select your App Service
+   - Find Docker Container Panel
+     - Select Registry, Image and Tag from panel.
+     - Save and retry.
+
+* Deploy script failure. You can safely ignore the following known issue of azure-mave-plugin.
+
+ [INFO] Start deploying to Web App azure-spring-cloud-test...
+ [INFO] Authenticate with ServerId: azure-auth
+ [INFO] [Correlation ID: d4bd2ee5-b008-42db-a713-baa108e805f0] Instance discovery was successful
+ [INFO] Target Web App doesn't exist. Creating a new one...
+ [INFO] Creating App Service Plan 'ServicePlan3c5a7f07-92cc-4173'...
+ [INFO] Successfully created App Service Plan.
+ [INFO] Successfully created Web App.
+ [INFO] ------------------------------------------------------------------------
+ [INFO] BUILD FAILURE
+ [INFO] ------------------------------------------------------------------------
+ [INFO] Total time: 33.109 s
+ [INFO] Finished at: 2018-05-07T10:49:42+08:00
+ [INFO] Final Memory: 56M/585M
+ [INFO] ------------------------------------------------------------------------
+ [ERROR] Failed to execute goal com.microsoft.azure:azure-webapp-maven-plugin:1.1.0:deploy (default-cli) on project initializr-service: Failed to find the war file: 'C:\Users\panli\Desktop\workspace\repo\azure\azure-spring-cloud-playground\initializr-service\target\initializr-service.war' -> [Help 1]
+ [ERROR]
+ [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+ [ERROR] Re-run Maven using the -X switch to enable full debug logging.
+ [ERROR]
+ [ERROR] For more information about the errors and possible solutions, please read the following articles:
+ [ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
