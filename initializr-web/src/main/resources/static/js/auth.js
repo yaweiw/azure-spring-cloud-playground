@@ -13,6 +13,8 @@
     var $freeAccountLink = $('#free_link');
     var $signInButton = $("#login_link");
     var $signOutButton = $("#logout_link");
+    var $userDropdown = $("#user_dropdown");
+    var $loggedUser = $("#logged_user");
     var $errorMessage = $(".app-error");
 
     // Check For & Handle Redirect From AAD After Login
@@ -29,11 +31,13 @@
     if (user) {
         $freeAccountLink.addClass("hidden");
         $signInButton.addClass("hidden");
-        $signOutButton.removeClass("hidden");
+        $userDropdown.removeClass("hidden");
+        $loggedUser.text(user.userName);
     } else {
         $freeAccountLink.removeClass("hidden");
         $signInButton.removeClass("hidden");
-        $signOutButton.addClass("hidden");
+        $userDropdown.addClass("hidden");
+        $loggedUser.text(undefined);
     }
 
     // Register NavBar Click Handlers
