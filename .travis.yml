@@ -9,6 +9,7 @@ services:
 install: true
 
 before_script:
+  - export TZ='Asia/Shanghai' && date
   - docker login -u $AZURE_CR_USERNAME -p $AZURE_CR_PASSWORD $AZURE_CR_LOGIN_SERVER
   - perl -pi -e 's/\$\{your-docker-image-prefix\}/$ENV{AZURE_CR_LOGIN_SERVER}/g' initializr-service/pom.xml
   - perl -pi -e 's/\$\{your-docker-image-name\}/azure-spring-cloud/g' initializr-service/pom.xml
