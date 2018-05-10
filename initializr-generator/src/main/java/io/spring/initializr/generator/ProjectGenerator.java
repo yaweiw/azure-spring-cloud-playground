@@ -19,6 +19,7 @@ package io.spring.initializr.generator;
 import io.spring.initializr.InitializrException;
 import io.spring.initializr.metadata.*;
 import io.spring.initializr.metadata.InitializrConfiguration.Env.Maven.ParentPom;
+import io.spring.initializr.resolver.ServiceResolver;
 import io.spring.initializr.util.TemplateRenderer;
 import io.spring.initializr.util.Version;
 import io.spring.initializr.util.VersionProperty;
@@ -73,6 +74,9 @@ public class ProjectGenerator {
 	private static final Version VERSION_2_0_0_M3 = Version.parse("2.0.0.M3");
 
 	private static final Version VERSION_2_0_0_M6 = Version.parse("2.0.0.M6");
+
+	private static final String KUBERNETES_FILE = "kubernetes.yaml";
+	private static final String DOCKER_PATH = "docker";
 
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
@@ -177,7 +181,14 @@ public class ProjectGenerator {
 		}
 	}
 
-	private void generateDockerStructure(@NonNull File rootDir, @NonNull String baseDir, Map<String, Boolean> modulesModel) {
+	private void writeKubernetesFile(File dir, ProjectRequest request){
+	    List<Service> services = ServiceResolver.resolve(request.getServices());
+	    Map<String, Object> model = new HashMap<>();
+	    model.put("services", services);
+	    writeText(new File(dir, KUBERNETES_FILE), templateRenderer.process(Paths.get(DOCKER_PATH, KUBERNETES_FILE).toString(), model));
+    }
+
+	private void generateDockerStructure(@NonNull File rootDir, @NonNull String baseDir, Map<String, Boolean> modulesModel, ProjectRequest request) {
 		final File dockerDir = Paths.get(rootDir.getPath(),baseDir, "docker").toFile();
 		final String template = "docker";
 		final String dockerComposeName = "docker-compose.yml";
@@ -191,6 +202,7 @@ public class ProjectGenerator {
 		writeText(new File(dockerDir, runBash), templateRenderer.process(Paths.get(template, runBash).toString(), null));
 		writeText(new File(dockerDir, runCmd), templateRenderer.process(Paths.get(template, runCmd).toString(), null));
 		writeText(new File(dockerDir, readMe), templateRenderer.process(Paths.get(template, readMe).toString(), null));
+		writeKubernetesFile(dockerDir, request);
 	}
 
 	/**
@@ -211,7 +223,7 @@ public class ProjectGenerator {
 				modulesModel.put(subModule.getName(), Boolean.TRUE);
 			}
 
-			generateDockerStructure(rootDir, request.getBaseDir(), modulesModel);
+			generateDockerStructure(rootDir, request.getBaseDir(), modulesModel, request);
 			publishProjectGeneratedEvent(request);
 
 			return rootDir;
