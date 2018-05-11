@@ -6,17 +6,19 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum Service {
-    CONFIG("cloud-config-server", 8888, "/gateway-server.yml", "demo/cloud-config-server"),
+    CONFIG("cloud-config-server", 8888, "/gateway-server.yml", "cloud-config-server"),
     EUREKA("cloud-eureka-server", 8761, "/", "cloud-eureka-server"),
     HYSTRIX_DASHBOARD("cloud-hystrix-dashboard", 7979, "/hystrix", "cloud-hystrix-dashboard"),
     GATEWAY("cloud-gateway", 9999, "/actuator/health", "cloud-gateway"),
     AZURE_SERVICE_BUS("azure-service-bus", 8081, "/azure-service-bus/actuator/health", "azure-service-bus");
 
+    private final static String CLOUD_PREFIX = "cloud-";
+    private final static String repository = "your-acr-repository";
+
     private final String name;
     private final int port;
     private final String healthCheckPath;
     private final String image;
-    private final static String repository = "your-acr-repository";
 
     private static Map<String, Service> nameToServices = Arrays.stream(Service.values()).collect(Collectors.toMap(Service::getName, Function.identity()));
 
@@ -49,5 +51,13 @@ public enum Service {
 
     public String getImage() {
         return repository + "/" + this.image;
+    }
+
+    public String getK8sName(){
+        if(this.name.startsWith(CLOUD_PREFIX)) {
+            return this.name.substring(CLOUD_PREFIX.length());
+        }
+
+        return this.name;
     }
 }

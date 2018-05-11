@@ -47,7 +47,5 @@ public class SpringCloudMicroservicePostprocessor extends AbstractProjectRequest
             subModule.resolve(metadata);
             request.addModule(subModule);
         }
-
-
     }
 }

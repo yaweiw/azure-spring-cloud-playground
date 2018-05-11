@@ -77,6 +77,8 @@ public class ProjectGenerator {
 
 	private static final String KUBERNETES_FILE = "kubernetes.yaml";
 	private static final String KUBERNETES_PATH = "kubernetes";
+	private static final String KUBERNETES_DEPLOY_SH = "deploy.sh";
+	private static final String KUBERNETES_README = "readme.md";
 
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
@@ -189,12 +191,13 @@ public class ProjectGenerator {
 		}
 
 		List<Service> services = ServiceResolver.resolve(request.getServices());
+		Map<String, Object> model = new HashMap<>();
+		model.put("services", services);
 
-		for(Service service: services) {
-			Map<String, Object> model = new HashMap<>();
-			model.put("services", Arrays.asList(service));
-			writeText(new File(k8sDir, service.getName() + ".yaml"), templateRenderer.process(Paths.get(KUBERNETES_PATH, KUBERNETES_FILE).toString(), model));
-		}
+		writeText(new File(k8sDir, KUBERNETES_FILE), templateRenderer.process(Paths.get(KUBERNETES_PATH, KUBERNETES_FILE).toString(), model));
+
+		writeText(new File(k8sDir, KUBERNETES_DEPLOY_SH), templateRenderer.process(Paths.get(KUBERNETES_PATH, KUBERNETES_DEPLOY_SH).toString(), null));
+		writeText(new File(k8sDir, KUBERNETES_README), templateRenderer.process(Paths.get(KUBERNETES_PATH, KUBERNETES_README).toString(), null));
     }
 
 	private void generateDockerStructure(@NonNull File rootDir, @NonNull String baseDir, Map<String, Boolean> modulesModel, ProjectRequest request) {

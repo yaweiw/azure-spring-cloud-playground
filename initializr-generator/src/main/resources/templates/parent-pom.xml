@@ -18,6 +18,30 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
+	<profiles>
+		<profile>
+			<id>docker</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<repository>demo</repository>
+			</properties>
+		</profile>
+		<profile>
+			<id>kubernetes</id>
+			<activation>
+				<activeByDefault>false</activeByDefault>
+			</activation>
+			<properties>
+				<acr.repository>your-acr-repository</acr.repository>
+				<acr.username>your-acr-username</acr.username>
+				<acr.password>your-acr-password</acr.password>
+			</properties>
+		</profile>
+
+	</profiles>
+
 	<properties>
 		{{#buildPropertiesMaven}}
 		<{{key}}>{{#value}}{{.}}{{/value}}</{{key}}>
@@ -143,8 +167,9 @@
 					</execution>
 				</executions>
 				<configuration>
-					<repository>demo/${project.name}</repository>
-					<!--<tag>${project.version}</tag>-->
+					<repository>${repository}/${project.name}</repository>
+					<username>${acr.username}</username>
+					<password>${acr.password}</password>
 					<buildArgs>
 						<JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
 					</buildArgs>
