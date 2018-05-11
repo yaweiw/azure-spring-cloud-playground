@@ -76,7 +76,7 @@ public class ProjectGenerator {
 	private static final Version VERSION_2_0_0_M6 = Version.parse("2.0.0.M6");
 
 	private static final String KUBERNETES_FILE = "kubernetes.yaml";
-	private static final String DOCKER_PATH = "docker";
+	private static final String KUBERNETES_PATH = "kubernetes";
 
 	@Autowired
 	private ApplicationEventPublisher eventPublisher;
@@ -231,11 +231,20 @@ public class ProjectGenerator {
 		}
 	}
 
-	private void writeKubernetesFile(File dir, ProjectRequest request){
-	    List<Service> services = ServiceResolver.resolve(request.getServices());
-	    Map<String, Object> model = new HashMap<>();
-	    model.put("services", services);
-	    writeText(new File(dir, KUBERNETES_FILE), templateRenderer.process(Paths.get(DOCKER_PATH, KUBERNETES_FILE).toString(), model));
+	private void generateKubernetesStructure(File rootDir, ProjectRequest request){
+		final File k8sDir = Paths.get(rootDir.getPath(),request.getBaseDir(), KUBERNETES_PATH).toFile();
+
+		if(!k8sDir.exists()){
+			k8sDir.mkdir();
+		}
+
+		List<Service> services = ServiceResolver.resolve(request.getServices());
+
+		for(Service service: services) {
+			Map<String, Object> model = new HashMap<>();
+			model.put("services", Arrays.asList(service));
+			writeText(new File(k8sDir, service.getName() + ".yaml"), templateRenderer.process(Paths.get(KUBERNETES_PATH, KUBERNETES_FILE).toString(), model));
+		}
     }
 
 	private void generateDockerStructure(@NonNull File rootDir, @NonNull String baseDir, Map<String, Boolean> modulesModel, ProjectRequest request) {
@@ -252,7 +261,6 @@ public class ProjectGenerator {
 		writeText(new File(dockerDir, runBash), templateRenderer.process(Paths.get(template, runBash).toString(), null));
 		writeText(new File(dockerDir, runCmd), templateRenderer.process(Paths.get(template, runCmd).toString(), null));
 		writeText(new File(dockerDir, readMe), templateRenderer.process(Paths.get(template, readMe).toString(), null));
-		writeKubernetesFile(dockerDir, request);
 	}
 
 	/**
@@ -274,6 +282,7 @@ public class ProjectGenerator {
 			}
 
 			generateDockerStructure(rootDir, request.getBaseDir(), modulesModel, request);
+			generateKubernetesStructure(rootDir, request);
 			publishProjectGeneratedEvent(request);
 
 			return rootDir;
