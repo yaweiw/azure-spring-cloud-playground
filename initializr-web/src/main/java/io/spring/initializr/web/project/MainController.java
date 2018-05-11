@@ -43,6 +43,7 @@ import io.spring.initializr.web.mapper.InitializrMetadataJsonMapper;
 import io.spring.initializr.web.mapper.InitializrMetadataV21JsonMapper;
 import io.spring.initializr.web.mapper.InitializrMetadataV2JsonMapper;
 import io.spring.initializr.web.mapper.InitializrMetadataVersion;
+import io.spring.initializr.web.support.PropertyLoader;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.taskdefs.Tar;
 import org.apache.tools.ant.taskdefs.Zip;
@@ -56,6 +57,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.ResponseEntity.BodyBuilder;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StreamUtils;
@@ -218,9 +220,21 @@ public class MainController extends AbstractInitializrController {
 		return (frag, out) -> out.write(this.getLinkTo().apply(frag.execute()));
 	}
 
+	private void addBuildInformation(@NonNull Map<String, Object> model) {
+		final PropertyLoader loader = new PropertyLoader("/git.properties");
+		final String developer = loader.getPropertyValue("git.commit.user.name");
+		final String commitId = loader.getPropertyValue("git.commit.id.abbrev");
+		final String buildTime = loader.getPropertyValue("git.build.time");
+		final String buildInfo = String.format("%s:%s@%s", developer, commitId, buildTime);
+
+		model.put("build.information", buildInfo);
+	}
+
 	@RequestMapping(path = "/", produces = "text/html")
 	public String home(Map<String, Object> model) {
-		renderHome(model);
+		this.addBuildInformation(model);
+		this.renderHome(model);
+
 		return "home";
 	}
 

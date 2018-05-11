@@ -20,7 +20,7 @@
  az ad sp create-for-rbac --name "${your-username}" --password "${your-password}"
 ```
 * After the service principal is successfully created, the following will be returned, which will be needed in later steps
-
+```
  {
     "appId": "${your-appId}",
     "displayName": "${your-display-name}",
@@ -28,7 +28,7 @@
     "password": "${your-password}",
     "tenant": "${your-tenant-id}"
  }
-
+```
 ==== Step 2: Create an Azure Container Registry (ACR) instance
 
 * Create ACR
@@ -44,11 +44,22 @@
  az acr credential show --name ${your-acr-name} --query passwords[0]
 ```
 * Your ACR credential will return in following format.
-
+```
   {
      "name": "password",
      "value": "${your-password}"
   }
+```
+* Update ACR credential to docker config, make sure your account appears in ~/.docker/config.son
+```
+  docker login -u ${your-acr-username} -p ${your-acr-password} ${your-acr-login-server}
+
+  "auths": {
+      "${your-acr-login-server": {
+          "auth": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+      }
+  }
+```
 
 ==== Step3: Add your ACR and Azure service principal to your maven settings
 
@@ -59,7 +70,7 @@
  $HOME/.m2/settings.xml
 ```
 * Add your ACR access settings like below
-
+```
  <servers>
      <server>
          <id>${your-acr-server-id}</id>
@@ -67,9 +78,9 @@
          <password>{your-acr-password}</password>
      </server>
  </servers>
-
+```
 * Add your Azure service principal access settings like below
-
+```
  <servers>
      <server>
          <id>${your-azure-server-id}</id>
@@ -81,77 +92,37 @@
         </configuration>
      </server>
  </servers>
-
+```
 * Save and close setting
 
-==== Step4: Config the maven build plugin
+==== Step4: Config the maven properties in pom.xml
 
-* Update the docker build plugin from pom.xml.
- ** replace ${your-acr-username} with your acr username.
-
- <plugin>
-     <groupId>com.spotify</groupId>
-     <artifactId>dockerfile-maven-plugin</artifactId>
-     <version>1.4.0</version>
-     <executions>
-         <execution>
-         <id>default</id>
-             <goals>
-                 <goal>build</goal>
-             </goals>
-         </execution>
-     </executions>
-     <configuration>
-         <repository>${your-acr-username}.azurecr.io/azure-spring-cloud</repository>
-         <buildArgs>
-             <JAR_FILE>initializr-service.jar</JAR_FILE>
-         </buildArgs>
-     </configuration>
- </plugin>
-
-* Update the docker deploy plugin from pom.xml.
-
- ** replace ${your-azure-server-id} and ${your-acr-server-id} configured in above.
- ** replace ${your-resource-group} from your azure portal.
- ** replace ${your-acr-username} from your acr username.
-
- <plugin>
-    <groupId>com.microsoft.azure</groupId>
-    <artifactId>azure-webapp-maven-plugin</artifactId>
-    <version>1.1.0</version>
-    <configuration>
-        <authentication>
-            <serverId>${your-azure-server-id}</serverId>
-        </authentication>
-        <resourceGroup>${your-resource-group}</resourceGroup>
-        <appName>${your-application-name}</appName>
-        <region>japaneast</region>
-        <containerSettings>
-            <imageName>${your-acr-username}.azurecr.io/azure-spring-cloud:latest</imageName>
-            <serverId>${your-acr-server-id}</serverId>
-            <registryUrl>https://${your-acr-username}.azurecr.io</registryUrl>
-        </containerSettings>
-        <appSettings>
-            <property>
-                <name>PORT</name>
-                <value>8080</value>
-            </property>
-        </appSettings>
-    </configuration>
- </plugin>
-
-* Update image fullname of script deploy-initializr-service.[sh/cmd]
- ** replace ${your-acr-username} from your acr username.
+* Update properties in project pom.xml file.
+ ** Replace ${your-docker-image-prefix} by your ACR login server (as the docker image prefix).
+ ** Replace ${your-docker-image-name} by any name you want to specific.
+ ** Replace ${your-azure-authentication-server} by ${your-azure-server-id} in below.
+ ** Replace ${your-azure-resource-group} from you azure account.
+ ** Replace ${your-azure-cr-sever} by ${your-acr-server-id} in below.
 ```
- #!/bin/bash
- cd ../ && mvn clean package -Dmaven.test.skip=true -Pfull && cd -
- docker push ${your-acr-username}/azure-spring-cloud:latest && mvn azure-webapp:deploy
+<properties>
+    <main.basedir>${basedir}/..</main.basedir>
+    <maven.build.timestamp.format>yyyy_MM_dd-HH_mm</maven.build.timestamp.format>
+
+    <docker.image.prefix>${your-docker-image-prefix}</docker.image.prefix>
+    <docker.image.name>${your-docker-image-name}</docker.image.name>
+    <docker.image.tag>${maven.build.timestamp}</docker.image.tag>
+    <docker.image>${docker.image.prefix}/${docker.image.name}</docker.image>
+
+    <azure.authentication.server>${your-azure-authentication-server}</azure.authentication.server>
+    <azure.resource.group>${your-azure-resource-group}</azure.resource.group>
+    <azure.cr.server>${your-azure-cr-server}</azure.cr.server>
+</properties>
 ```
 
 ==== Troubleshooting
 
 * Docker push failure. Make sure the ACR account exist and you've logged in in via Azure CLI.
-
+```
  The push refers to repository [${your-acr-account}.azurecr.io/azure-spring-cloud]
  dd6018674b00: Preparing
  9195aaf883df: Preparing
@@ -164,16 +135,20 @@
 
  PS C:\Users\panli> az acr login -n ${your-acr-account}
  Login Succeeded
+```
 
 * Service unavailable in web application link. You can login to azure portal, find the web application from the App Services and do the following:
 
+```
  Select your App Service
    - Find Docker Container Panel
      - Select Registry, Image and Tag from panel.
      - Save and retry.
+```
 
 * Deploy script failure. You can safely ignore the following known issue of azure-mave-plugin.
 
+```
  [INFO] Start deploying to Web App azure-spring-cloud-test...
  [INFO] Authenticate with ServerId: azure-auth
  [INFO] [Correlation ID: d4bd2ee5-b008-42db-a713-baa108e805f0] Instance discovery was successful
@@ -195,3 +170,4 @@
  [ERROR]
  [ERROR] For more information about the errors and possible solutions, please read the following articles:
  [ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+```

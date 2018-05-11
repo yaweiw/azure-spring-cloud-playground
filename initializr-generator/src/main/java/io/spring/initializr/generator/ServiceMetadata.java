@@ -59,7 +59,7 @@ public class ServiceMetadata {
                 "org.springframework.cloud.client.discovery.EnableDiscoveryClient",
                 "org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard"));
         portMap.put(cloudHystrixDashboard, 7979);
-        serviceLinks.add(new ServiceLink(cloudHystrixDashboard, "http://localhost:7979/", true));
+        serviceLinks.add(new ServiceLink(cloudHystrixDashboard, "http://localhost:7979/hystrix", true));
     }
 
     public static Map<String, List<ServiceLink>> getLinksMap(ProjectRequest rootRequest) {
