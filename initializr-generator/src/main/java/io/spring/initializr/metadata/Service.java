@@ -7,15 +7,16 @@ import java.util.stream.Collectors;
 
 public enum Service {
     CONFIG("cloud-config-server", 8888, "/gateway-server.yml", "demo/cloud-config-server"),
-    EUREKA("cloud-eureka-server", 8761, "/", "demo/cloud-eureka-server"),
-    HYSTRIX_DASHBOARD("cloud-hystrix-dashboard", 7979, "/hystrix", "demo/cloud-hystrix-dashboard"),
-    GATEWAY("cloud-gateway", 9999, "/actuator/health", "demo/cloud-gateway"),
-    AZURE_SERVICE_BUS("azure-service-bus", 8081, "/azure-service-bus/actuator/health", "demo/azure-service-bus");
+    EUREKA("cloud-eureka-server", 8761, "/", "cloud-eureka-server"),
+    HYSTRIX_DASHBOARD("cloud-hystrix-dashboard", 7979, "/hystrix", "cloud-hystrix-dashboard"),
+    GATEWAY("cloud-gateway", 9999, "/actuator/health", "cloud-gateway"),
+    AZURE_SERVICE_BUS("azure-service-bus", 8081, "/azure-service-bus/actuator/health", "azure-service-bus");
 
     private final String name;
     private final int port;
     private final String healthCheckPath;
     private final String image;
+    private final static String repository = "your-acr-repository";
 
     private static Map<String, Service> nameToServices = Arrays.stream(Service.values()).collect(Collectors.toMap(Service::getName, Function.identity()));
 
@@ -47,6 +48,6 @@ public enum Service {
     }
 
     public String getImage() {
-        return image;
+        return repository + "/" + this.image;
     }
 }
