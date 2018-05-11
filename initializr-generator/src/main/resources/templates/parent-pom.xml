@@ -167,7 +167,7 @@
 					</execution>
 				</executions>
 				<configuration>
-					<repository>${repository}/${project.name}</repository>
+					<repository>${acr.repository}/${project.name}</repository>
 					<username>${acr.username}</username>
 					<password>${acr.password}</password>
 					<buildArgs>
