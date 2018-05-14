@@ -25,7 +25,7 @@
 				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
-				<repository>demo</repository>
+				<acr.repository>demo</acr.repository>
 			</properties>
 		</profile>
 		<profile>
