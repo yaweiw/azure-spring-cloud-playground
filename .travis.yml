@@ -18,8 +18,8 @@ before_script:
 jobs:
   include:
     - stage: build
-      script: ./mvnw clean install -DskipTests
+      script: ./mvnw clean package -DskipTests -Pfull
     - stage: docker push
-      script: ./mvnw clean package -DskipTests -Pfull && docker images
-      if: branch = master AND type != pull_request
+      script: ./mvnw clean install -DskipTests -Pfull && docker images
+      if: branch = make-master-branch-to-push-images AND type != pull_request
 

@@ -147,7 +147,7 @@
 				<executions>
 					<execution>
 						<id>image-tag-timestamp</id>
-						<phase>package</phase>
+						<phase>install</phase>
 						<goals>
 							<goal>build</goal>
 							<goal>push</goal>
@@ -162,7 +162,7 @@
 					</execution>
 					<execution>
 						<id>image-tag-latest</id>
-						<phase>package</phase>
+						<phase>install</phase>
 						<goals>
 							<goal>build</goal>
 							<goal>push</goal>
