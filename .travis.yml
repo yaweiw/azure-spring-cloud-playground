@@ -13,8 +13,13 @@ before_script:
   - docker login -u $AZURE_CR_USERNAME -p $AZURE_CR_PASSWORD $AZURE_CR_LOGIN_SERVER
   - perl -pi -e 's/\$\{your-docker-image-prefix\}/$ENV{AZURE_CR_LOGIN_SERVER}/g' initializr-service/pom.xml
   - perl -pi -e 's/\$\{your-docker-image-name\}/azure-spring-cloud/g' initializr-service/pom.xml
+#    if: branch = master
 
-script:
-  - ./mvnw clean install -DskipTests
-  - ./mvnw clean package -DskipTests -Pfull
-  - docker images
+jobs:
+  include:
+    - stage: build
+      script: ./mvnw clean install -DskipTests
+    - stage: docker push
+      script: ./mvnw clean package -DskipTests -Pfull && docker images
+      if: branch = master AND type != pull_request
+
