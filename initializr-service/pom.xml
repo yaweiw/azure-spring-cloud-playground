@@ -36,10 +36,6 @@
 			<groupId>io.spring.initializr</groupId>
 			<artifactId>initializr-web</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>io.spring.initializr</groupId>
-			<artifactId>initializr-actuator</artifactId>
-		</dependency>
 
 		<dependency>
 			<groupId>javax.cache</groupId>

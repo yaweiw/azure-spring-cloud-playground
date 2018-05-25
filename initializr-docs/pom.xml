@@ -26,11 +26,6 @@
 			<artifactId>initializr-web</artifactId>
 			<optional>true</optional>
 		</dependency>
-		<dependency>
-			<groupId>io.spring.initializr</groupId>
-			<artifactId>initializr-actuator</artifactId>
-			<optional>true</optional>
-		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

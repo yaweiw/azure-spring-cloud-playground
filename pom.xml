@@ -44,7 +44,6 @@
 	</properties>
 
 	<modules>
-		<module>initializr-actuator</module>
 		<module>initializr-docs</module>
 		<module>initializr-generator</module>
 		<module>initializr-web</module>
@@ -52,11 +51,6 @@
 
 	<dependencyManagement>
 		<dependencies>
-			<dependency>
-				<groupId>io.spring.initializr</groupId>
-				<artifactId>initializr-actuator</artifactId>
-				<version>0.6.0.BUILD-SNAPSHOT</version>
-			</dependency>
 			<dependency>
 				<groupId>io.spring.initializr</groupId>
 				<artifactId>initializr-generator</artifactId>
