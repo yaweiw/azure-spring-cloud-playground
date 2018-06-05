@@ -1,4 +1,7 @@
-package com.microsoft.azure.springcloudplayground.metadata;
+package com.microsoft.azure.springcloudplayground.service;
+
+import com.microsoft.azure.springcloudplayground.metadata.Describable;
+import com.microsoft.azure.springcloudplayground.metadata.MetadataElement;
 
 public class ServiceModule extends MetadataElement implements Describable {
     private String description;
@@ -18,6 +21,11 @@ public class ServiceModule extends MetadataElement implements Describable {
     public ServiceModule(ServiceModule module) {
         super(module);
         this.description = module.description;
+    }
+
+    public ServiceModule(String id, String name, String description) {
+        super(id, name);
+        this.description = description;
     }
 
     @Override

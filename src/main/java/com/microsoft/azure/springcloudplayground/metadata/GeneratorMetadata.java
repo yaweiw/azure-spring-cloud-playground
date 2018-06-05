@@ -1,6 +1,7 @@
 package com.microsoft.azure.springcloudplayground.metadata;
 
 import com.microsoft.azure.springcloudplayground.exception.InvalidGeneratorMetadataException;
+import com.microsoft.azure.springcloudplayground.service.ServiceModuleCapability;
 import com.microsoft.azure.springcloudplayground.util.Version;
 import com.microsoft.azure.springcloudplayground.util.VersionParser;
 import com.microsoft.azure.springcloudplayground.util.VersionProperty;

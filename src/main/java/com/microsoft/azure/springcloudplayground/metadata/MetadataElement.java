@@ -5,12 +5,12 @@ public class MetadataElement {
     /**
      * A visual representation of this element.
      */
-    private String name;
+    protected String name;
 
     /**
      * The unique id of this element for a given capability.
      */
-    private String id;
+    protected String id;
 
     public MetadataElement() {
     }

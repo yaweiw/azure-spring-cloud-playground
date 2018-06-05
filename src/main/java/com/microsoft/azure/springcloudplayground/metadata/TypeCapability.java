@@ -1,5 +1,8 @@
 package com.microsoft.azure.springcloudplayground.metadata;
 
+import com.microsoft.azure.springcloudplayground.service.ServiceCapability;
+import com.microsoft.azure.springcloudplayground.service.ServiceCapabilityType;
+
 import java.util.ArrayList;
 import java.util.List;
 

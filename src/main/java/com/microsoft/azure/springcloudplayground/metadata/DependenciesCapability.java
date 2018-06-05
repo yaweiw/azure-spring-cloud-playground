@@ -1,6 +1,8 @@
 package com.microsoft.azure.springcloudplayground.metadata;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.microsoft.azure.springcloudplayground.service.ServiceCapability;
+import com.microsoft.azure.springcloudplayground.service.ServiceCapabilityType;
 import com.microsoft.azure.springcloudplayground.util.VersionParser;
 
 import java.util.*;

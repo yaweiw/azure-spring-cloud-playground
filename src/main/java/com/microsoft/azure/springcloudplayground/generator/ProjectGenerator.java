@@ -2,7 +2,8 @@ package com.microsoft.azure.springcloudplayground.generator;
 
 import com.microsoft.azure.springcloudplayground.exception.GeneratorException;
 import com.microsoft.azure.springcloudplayground.metadata.*;
-import com.microsoft.azure.springcloudplayground.metadata.SpringCloudModule;
+import com.microsoft.azure.springcloudplayground.service.ConfigurableService;
+import com.microsoft.azure.springcloudplayground.service.Service;
 import com.microsoft.azure.springcloudplayground.util.TemplateRenderer;
 import com.microsoft.azure.springcloudplayground.util.Version;
 import com.microsoft.azure.springcloudplayground.util.VersionProperty;
@@ -109,53 +110,6 @@ public class ProjectGenerator {
     public void setTemporaryFiles(Map<String, List<File>> temporaryFiles) {
         this.temporaryFiles = temporaryFiles;
     }
-
-    /**
-     * Generate a Maven pom for the specified {@link ProjectRequest}.
-     * @param request the project request
-     * @return the Maven POM
-     */
-    /*
-    public byte[] generateMavenPom(ProjectRequest request) {
-        try {
-            Map<String, Object> model = resolveModel(request);
-            if (!isMavenBuild(request)) {
-                throw new InvalidProjectRequestException("Could not generate Maven pom, "
-                        + "invalid project type " + request.getType());
-            }
-            byte[] content = doGenerateMavenPom(model, "starter-pom.xml");
-            publishProjectGeneratedEvent(request);
-            return content;
-        }
-        catch (GeneratorException ex) {
-            publishProjectFailedEvent(request, ex);
-            throw ex;
-        }
-    }*/
-
-    /**
-     * Generate a Gradle build file for the specified {@link ProjectRequest}.
-     * @param request the project request
-     * @return the gradle build
-     */
-    /*
-    public byte[] generateGradleBuild(ProjectRequest request) {
-        try {
-            Map<String, Object> model = resolveModel(request);
-            if (!isGradleBuild(request)) {
-                throw new InvalidProjectRequestException(
-                        "Could not generate Gradle build, " + "invalid project type "
-                                + request.getType());
-            }
-            byte[] content = doGenerateGradleBuild(model);
-            publishProjectGeneratedEvent(request);
-            return content;
-        }
-        catch (GeneratorException ex) {
-            publishProjectFailedEvent(request, ex);
-            throw ex;
-        }
-    }*/
 
     private void writeKubernetesFile(File dir, ProjectRequest request){
         List<Service> services = ServiceResolver.resolve(request.getServices());
@@ -355,9 +309,9 @@ public class ProjectGenerator {
 
             // Write other microservice modules' yaml to shared folder
             // How many properties file will be written is decided by parent request
-            List<SpringCloudModule> nonBasicServices = parentRequest.getModules().stream()
+            List<ConfigurableService> azureServices = parentRequest.getModules().stream()
                     .filter(module -> !ModulePropertiesResolver.isInfraModule(module.getName()))
-                    .map(module -> new SpringCloudModule(module.getName(), 0))
+                    .map(module -> new ConfigurableService(module.getApplicationName(), "0"))
                     .collect(Collectors.toList());
 
             for(ProjectRequest module : parentRequest.getModules()) {
@@ -371,7 +325,7 @@ public class ProjectGenerator {
                 }
 
                 if(ModulePropertiesResolver.isGatewayModule(moduleName)) {
-                    model.put("services", nonBasicServices);
+                    model.put("services", azureServices);
                 } else if(!ModulePropertiesResolver.isInfraModule(moduleName)){
                     model.put("applicationName", module.getName());
                     model.put("port", getPort(module.getName()));

@@ -2,6 +2,8 @@ package com.microsoft.azure.springcloudplayground.metadata;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.microsoft.azure.springcloudplayground.service.ServiceCapability;
+import com.microsoft.azure.springcloudplayground.service.ServiceCapabilityType;
 
 public class TextCapability extends ServiceCapability<String> {
 

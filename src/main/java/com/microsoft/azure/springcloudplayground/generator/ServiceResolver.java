@@ -1,6 +1,6 @@
 package com.microsoft.azure.springcloudplayground.generator;
 
-import com.microsoft.azure.springcloudplayground.metadata.Service;
+import com.microsoft.azure.springcloudplayground.service.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;

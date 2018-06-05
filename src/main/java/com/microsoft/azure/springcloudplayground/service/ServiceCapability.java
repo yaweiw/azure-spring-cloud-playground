@@ -1,4 +1,4 @@
-package com.microsoft.azure.springcloudplayground.metadata;
+package com.microsoft.azure.springcloudplayground.service;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -65,7 +65,7 @@ public abstract class ServiceCapability<T> implements Cloneable {
     /**
      * Merge the content of this instance with the specified content.
      * @param otherContent the content to merge
-     * @see #merge(com.microsoft.azure.springcloudplayground.metadata.ServiceCapability)
+     * @see #merge(ServiceCapability)
      */
     public abstract void merge(T otherContent);
 

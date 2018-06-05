@@ -1,6 +1,7 @@
 package com.microsoft.azure.springcloudplayground.metadata;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.microsoft.azure.springcloudplayground.service.ServiceModuleGroup;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.util.StringUtils;
 
