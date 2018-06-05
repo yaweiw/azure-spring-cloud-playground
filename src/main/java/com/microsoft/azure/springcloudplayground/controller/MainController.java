@@ -3,7 +3,7 @@ package com.microsoft.azure.springcloudplayground.controller;
 import com.microsoft.azure.springcloudplayground.generator.BasicProjectRequest;
 import com.microsoft.azure.springcloudplayground.generator.ProjectGenerator;
 import com.microsoft.azure.springcloudplayground.generator.ProjectRequest;
-import com.microsoft.azure.springcloudplayground.metadata.DependencyMetadataProvider;
+import com.microsoft.azure.springcloudplayground.dependency.DependencyMetadataProvider;
 import com.microsoft.azure.springcloudplayground.metadata.GeneratorMetadataProvider;
 import com.microsoft.azure.springcloudplayground.util.PropertyLoader;
 import com.microsoft.azure.springcloudplayground.util.TemplateRenderer;

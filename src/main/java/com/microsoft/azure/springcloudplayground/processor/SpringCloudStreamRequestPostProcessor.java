@@ -1,7 +1,7 @@
 package com.microsoft.azure.springcloudplayground.processor;
 
 import com.microsoft.azure.springcloudplayground.generator.ProjectRequest;
-import com.microsoft.azure.springcloudplayground.metadata.Dependency;
+import com.microsoft.azure.springcloudplayground.dependency.Dependency;
 import com.microsoft.azure.springcloudplayground.metadata.GeneratorMetadata;
 import org.springframework.stereotype.Component;
 

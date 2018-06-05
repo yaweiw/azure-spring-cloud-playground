@@ -1,6 +1,7 @@
 package com.microsoft.azure.springcloudplayground.autoconfigure;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.microsoft.azure.springcloudplayground.dependency.DependencyMetadataProvider;
 import com.microsoft.azure.springcloudplayground.generator.ProjectGenerator;
 import com.microsoft.azure.springcloudplayground.generator.ProjectRequestPostProcessor;
 import com.microsoft.azure.springcloudplayground.generator.ProjectRequestResolver;

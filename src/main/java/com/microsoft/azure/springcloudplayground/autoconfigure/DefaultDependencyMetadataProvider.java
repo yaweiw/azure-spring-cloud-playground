@@ -1,5 +1,8 @@
 package com.microsoft.azure.springcloudplayground.autoconfigure;
 
+import com.microsoft.azure.springcloudplayground.dependency.Dependency;
+import com.microsoft.azure.springcloudplayground.dependency.DependencyMetadata;
+import com.microsoft.azure.springcloudplayground.dependency.DependencyMetadataProvider;
 import com.microsoft.azure.springcloudplayground.metadata.*;
 import com.microsoft.azure.springcloudplayground.util.Version;
 import org.springframework.cache.annotation.Cacheable;

@@ -1,4 +1,4 @@
-package com.microsoft.azure.springcloudplayground.metadata;
+package com.microsoft.azure.springcloudplayground.dependency;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

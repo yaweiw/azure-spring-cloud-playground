@@ -1,5 +1,6 @@
-package com.microsoft.azure.springcloudplayground.metadata;
+package com.microsoft.azure.springcloudplayground.dependency;
 
+import com.microsoft.azure.springcloudplayground.metadata.GeneratorMetadata;
 import com.microsoft.azure.springcloudplayground.util.Version;
 
 public interface DependencyMetadataProvider {

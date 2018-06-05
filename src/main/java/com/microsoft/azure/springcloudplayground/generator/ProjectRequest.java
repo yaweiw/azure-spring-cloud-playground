@@ -1,5 +1,6 @@
 package com.microsoft.azure.springcloudplayground.generator;
 
+import com.microsoft.azure.springcloudplayground.dependency.Dependency;
 import com.microsoft.azure.springcloudplayground.exception.InvalidProjectRequestException;
 import com.microsoft.azure.springcloudplayground.metadata.*;
 import com.microsoft.azure.springcloudplayground.util.Version;

@@ -1,5 +1,7 @@
-package com.microsoft.azure.springcloudplayground.metadata;
+package com.microsoft.azure.springcloudplayground.dependency;
 
+import com.microsoft.azure.springcloudplayground.metadata.BillOfMaterials;
+import com.microsoft.azure.springcloudplayground.metadata.Repository;
 import com.microsoft.azure.springcloudplayground.util.Version;
 
 import java.util.Map;
